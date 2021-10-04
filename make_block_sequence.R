@@ -1,3 +1,5 @@
+require(tidyverse)
+
 #play with trial sequences
 
 #stimuli:
