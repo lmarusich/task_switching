@@ -21,7 +21,7 @@ power_result_vig_1 <- ANOVA_power(design_result,
                                   seed = 9951)
 power_result_vig_1
 #anova_congruency                   100.0     0.78175 (0.70 in paper)
-#anova_posture:condition            100.0     0.13004 (0.09 in paper)
+#anova_posture:condition            100.0     0.13004 (0.16 in paper)
 #anova_congruency:condition         100.0     0.47422 (0.45 in paper)
 
 #plot_power(design_result, min_n = 10, max_n = 500)
