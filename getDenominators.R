@@ -2,19 +2,24 @@
 
 library(MASS)
 
+#read in accuracy data from experiment 2 (smith et al)
 df <- read.csv(file = "StandingData.csv", stringsAsFactors = F)
 df <- df[1:30 , 1:9]
 
-fractions <- list()
+fractionlist <- list()
 denoms <- list()
 maxdenom <- numeric(8)
 
 for (i in 2:9){
   
-  tempmultiplier <- fractions(df[, i], max = 100)
-  fractions[[i-1]] <- tempmultiplier
+  #convert each column of decimals from spreadsheet to fractions
+  tempfractions <- fractions(df[, i], max = 100)
+  fractionlist[[i-1]] <- tempfractions
   
-  denoms[[i-1]] <- as.numeric(sapply(strsplit(attr(tempmultiplier,"fracs"), "/"), function(x) x[2]))
+  #get just the denominators from the fractions
+  denoms[[i-1]] <- as.numeric(sapply(strsplit(attr(tempfractions,"fracs"), "/"), function(x) x[2]))
+  
+  #figure out what the largest denominator is from that column
   maxdenom[i-1] <- max(denoms[[i-1]], na.rm = T)
   
 }
