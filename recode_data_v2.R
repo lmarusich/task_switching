@@ -119,12 +119,27 @@ condition <- read.csv(paste0(workingdir,
                       stringsAsFactors = F)
 
 condition$condition <- condition$co
-#head(condition)
+head(condition)
+
+order <- seq(1:dim(task_switching_raw)[1])
+
+task_switching_raw$order.num <- order
 
 task_switching_merged <- merge(task_switching_raw, 
                                condition, 
-                               by = "condition")
+                               by = "condition",
+                               all = TRUE,
+                               sort = F)
 
+
+ task_switching_merged_sorted <- arrange(task_switching_merged, 
+                                         order.num
+                                         )
+
+task_switching_raw$shapeType == task_switching_merged_sorted$shapeType
+  
+  
+  
 head(task_switching_merged)
 #Re-calc con/incon based on condition 
 task_switching_recoded <- task_switching_merged %>% 
@@ -135,14 +150,21 @@ task_switching_recoded <- task_switching_merged %>%
           TRUE ~ "incongruent")  #If it doesn't match the above two if conditions
         )
 
+
+
+task_switching_recoded_sorted <- arrange(task_switching_recoded, 
+                                         order.num
+                                         )
 #Compare recoding
-sum(task_switching_recoded$new_congruency == corrected.df$new_congruency)
+sum(task_switching_recoded_sorted$new_congruency == corrected.df$new_congruency)
 
 #Compare shapeType
-(task_switching_recoded$shapeType == corrected.df$shapeType)
+sum(task_switching_recoded_sorted$shapeType == corrected.df$shapeType)
 
 #Compare shapeColor
-(task_switching_recoded$shapeColor == corrected.df$shapeColor)
+sum(task_switching_recoded_sorted$shapeColor == corrected.df$shapeColor)
+
+sum(task_switching_recoded_sorted$shapeColor == corrected.df$shapeColor)
 
 write.csv(task_switching_recoded, "jon_recoded.csv")
 write.csv(corrected.df, "laura_recoded.csv")
