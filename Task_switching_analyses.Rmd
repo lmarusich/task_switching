@@ -1,0 +1,214 @@
+---
+title: "Task Switching Replication"
+author: "Jon Bakdash & Laura Marusich"
+date: "`r Sys.Date()`"
+output:
+  pdf_document: 
+    latex_engine: xelatex
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, tidy = FALSE)
+options(width = 100)
+
+
+if(!require("pacman")) install.packages("pacman")
+pacman::p_load(knitr, rmarkdown, yaml, bookdown, cowplot, pals, viridis, renv, 
+               tidyverse, parallel, optimParallel, ez, psychReport, sjstats, 
+               rstatix, corrplot, superb)
+
+#Create plots and tables directory 
+  dir.create(file.path(getwd(),"/plots"),  showWarnings = F)
+  
+#Get the working directory
+  workingdir <- getwd()
+
+
+```
+
+#Read in and Check Raw Data
+```{r}
+
+#Import current data
+  task_switching_raw <- read.csv(paste0(workingdir, "/task-switching-replication-recoded.csv"))
+  head(task_switching_raw)
+  
+#does every person have 392 trials?
+  ntrials_sub <- task_switching_raw %>% 
+    group_by(participant) %>%
+    summarize(ntrials = n()) %>%
+    pull(ntrials)
+    
+all(ntrials_sub == 392)
+
+#does every block start with a buffer and have 49 trials?
+task_switching_raw <- task_switching_raw %>%
+  mutate(condblock = paste0(posture, blockNum))
+
+blocktrials <- task_switching_raw %>%
+  group_by(participant, condblock) %>%
+  summarize(ntrials = n(), firsttrial = first(switchTrialType)) 
+
+all(blocktrials$ntrials == 49)
+all(blocktrials$firsttrial == "buffer")
+```
+
+#Clean Data
+```{r}
+#Drop buffer trials
+  task_switching_raw2 <- task_switching_raw %>% 
+                            filter(switchTrialType != "buffer")
+  
+#Recode Correct to 1 and Incorrect to 0
+  task_switching_raw2$correct_bin <- recode(task_switching_raw2$correct, 
+                                            "no"  = 0,
+                                            "yes" = 1)
+
+#Calc overall acc by participant
+   ts_overall_acc <- task_switching_raw2 %>%
+                          group_by(participant)  %>%
+                           summarize(Accuracy    = mean(correct_bin))
+   
+#find participants with less than 80% accuracy
+   low_acc_subs <- ts_overall_acc %>% filter(Accuracy < 0.80) %>%
+     select(participant)
+  
+#Drop participants w/<=80% acc
+  #8, 49, 44, 2, 15, 51
+
+     task_switching_raw3 <- task_switching_raw2 %>% 
+                              filter(!(participant %in% low_acc_subs$participant))
+   
+#Calc mean Acc by participant and conditions (posture, con, switch)  
+  #Narrow format 
+  ts_acc_mean <- task_switching_raw3 %>%
+                      group_by(participant, 
+                               posture,
+                               congruantTrialType, 
+                                switchTrialType) %>%
+                      summarize(Accuracy    = mean(correct_bin))
+  
+#Convert data to wide format 
+  ts_acc_mean_wide <- ts_acc_mean %>%
+                        pivot_wider(names_from = c(posture, 
+                                                   congruantTrialType,
+                                                   switchTrialType), 
+                                    values_from =   Accuracy)
+  
+  write.csv(ts_acc_mean_wide, file = "new_recoded_for_statview.csv", row.names = F)
+  
+  ts_acc_mean <- data.frame(ts_acc_mean)
+  ts_acc_mean$posture <- as.factor(ts_acc_mean$posture)
+  ts_acc_mean$participant <- as.factor(ts_acc_mean$participant)
+  ts_acc_mean$congruantTrialType <- as.factor(ts_acc_mean$congruantTrialType)
+  ts_acc_mean$switchTrialType <- as.factor(ts_acc_mean$switchTrialType)
+  str(ts_acc_mean)
+  
+  #Total N = 48
+  length(unique(ts_acc_mean$participant))
+```
+
+## Plots and Analyses 
+```{r, echo = TRUE}
+#Accuracy by participant, before drops
+  hist(ts_overall_acc$Accuracy)
+
+#Accuracy for all cells
+  hist(ts_acc_mean$Accuracy)
+
+exp1_anova <- ezANOVA(ts_acc_mean, 
+                      dv = Accuracy, 
+                      wid = participant, 
+                      within = .(posture, congruantTrialType, switchTrialType), 
+                      type = 3, 
+                      detailed = TRUE,
+                      return_aov = T
+                      )
+#data.frame(exp1_anova$ANOVA)
+output1 <- aovEffectSize(exp1_anova, effectSize = "pes")
+output1 <- data.frame(output1$ANOVA)
+
+congruent.labs <- c("Congruent", "Incongruent")
+names(congruent.labs) <- c("1", "2")
+
+#make plot like Smith et al's
+superbPlot(ts_acc_mean_wide,
+           WSFactors = c("Condition(2)", "Congruent(2)", "Posture(2)"),
+           variables = colnames(ts_acc_mean_wide)[2:9],
+           errorbar = "SE",
+           plotStyle = "line",
+           factorOrder = c("Condition","Posture","Congruent"),
+           adjustments = list(purpose = "difference"))+
+  theme_classic()+
+  facet_wrap(vars(Congruent), labeller = labeller(Congruent = congruent.labs)) +
+  scale_x_discrete(labels=c("1" = "No Switch", "2" = "Switch"))+
+  scale_color_manual(values=c("#E69F00", "#0072B2"), labels = c("Sitting", "Standing")) +
+  labs(y = "Accuracy")
+
+
+
+# write.csv(output, "output_ez.csv")
+#importantly there was a significant condition [switch] × posture interaction,
+#F(1, 29) = 5.54, p = .026, η2p = .16.
+#posture:switchTrialType   1  52 6.705827e-03 0.15814085 2.205015e+00
+#6.016033e-01       1.117445e-04
+#p = 0.14
+#GES = 0.07
+# exp1_anova.b <-  aov(Accuracy ~  
+#                      posture*congruantTrialType*switchTrialType +
+#                      Error(participant/posture*congruantTrialType*switchTrialType),
+#                      ts_acc_mean)
+# #str(ts_acc_mean)
+# summary(exp1_anova.b)
+# output <- anova_stats(exp1_anova.b)
+# write.csv(output, "output_aov.csv")
+```
+
+```{r}
+#look at reaction time for correct trials?
+ts_correct_only <- task_switching_raw3 %>%
+  filter(correct_bin == 1)
+
+ts_rt_mean <- ts_correct_only %>%
+                      group_by(participant, 
+                               posture,
+                               congruantTrialType, 
+                                switchTrialType) %>%
+                      summarize(mean_rt    = mean(reactionTime))
+
+#Convert data to wide format 
+  ts_rt_mean_wide <- ts_rt_mean %>%
+                        pivot_wider(names_from = c(posture, 
+                                                   congruantTrialType,
+                                                   switchTrialType), 
+                                    values_from =   mean_rt)
+  
+  
+  superbPlot(ts_rt_mean_wide,
+           WSFactors = c("Condition(2)", "Congruent(2)", "Posture(2)"),
+           variables = colnames(ts_acc_mean_wide)[2:9],
+           errorbar = "SE",
+           plotStyle = "line",
+           factorOrder = c("Condition","Posture","Congruent"),
+           adjustments = list(purpose = "difference"))+
+  theme_classic()+
+  facet_wrap(vars(Congruent), labeller = labeller(Congruent = congruent.labs)) +
+  scale_x_discrete(labels=c("1" = "No Switch", "2" = "Switch"))+
+  scale_color_manual(values=c("#E69F00", "#0072B2"), labels = c("Sitting", "Standing")) +
+  labs(y = "Reaction Time")
+  
+  exp1_anova_rt <- ezANOVA(ts_rt_mean, 
+                      dv = mean_rt, 
+                      wid = participant, 
+                      within = .(posture, congruantTrialType, switchTrialType), 
+                      type = 3, 
+                      detailed = TRUE,
+                      return_aov = T
+                      )
+#data.frame(exp1_anova$ANOVA)
+output_rt <- aovEffectSize(exp1_anova, effectSize = "pes")
+output_rt <- data.frame(output_rt$ANOVA)
+
+
+
+```
