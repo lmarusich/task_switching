@@ -121,9 +121,9 @@ condition <- read.csv(paste0(workingdir,
 condition$condition <- condition$co
 head(condition)
 
-order <- seq(1:dim(task_switching_raw)[1])
-
-task_switching_raw$order.num <- order
+# order <- seq(1:dim(task_switching_raw)[1])
+# 
+# task_switching_raw$order.num <- order
 
 task_switching_merged <- merge(task_switching_raw, 
                                condition, 
@@ -132,17 +132,21 @@ task_switching_merged <- merge(task_switching_raw,
                                sort = F)
 
 
- task_switching_merged_sorted <- arrange(task_switching_merged, 
-                                         order.num
-                                         )
+ # task_switching_merged_sorted <- arrange(task_switching_merged, 
+ #                                         order.num
+ #                                         )
 
 task_switching_raw$shapeType == task_switching_merged_sorted$shapeType
   
-  
+task_switching_joined <- 
+join(task_switching_raw, 
+      condition, 
+      by = "condition",
+      type = 'full')
   
 head(task_switching_merged)
 #Re-calc con/incon based on condition 
-task_switching_recoded <- task_switching_merged %>% 
+task_switching_recoded <- task_switching_joined %>% 
   mutate(new_congruency = 
          case_when(
           shapeType == shape.left  & shapeColor == color.left ~ "congruent",
@@ -151,20 +155,20 @@ task_switching_recoded <- task_switching_merged %>%
         )
 
 
-
-task_switching_recoded_sorted <- arrange(task_switching_recoded, 
-                                         order.num
-                                         )
+# 
+# task_switching_recoded_sorted <- arrange(task_switching_recoded, 
+#                                          order.num
+#                                          )
 #Compare recoding
-sum(task_switching_recoded_sorted$new_congruency == corrected.df$new_congruency)
+sum(task_switching_recoded$new_congruency == corrected.df$new_congruency)
 
 #Compare shapeType
-sum(task_switching_recoded_sorted$shapeType == corrected.df$shapeType)
+sum(task_switching_recoded$shapeType == corrected.df$shapeType)
 
 #Compare shapeColor
-sum(task_switching_recoded_sorted$shapeColor == corrected.df$shapeColor)
+sum(task_switching_recoded$shapeColor == corrected.df$shapeColor)
 
-sum(task_switching_recoded_sorted$shapeColor == corrected.df$shapeColor)
+sum(task_switching_recoded$shapeColor == corrected.df$shapeColor)
 
 write.csv(task_switching_recoded, "jon_recoded.csv")
 write.csv(corrected.df, "laura_recoded.csv")

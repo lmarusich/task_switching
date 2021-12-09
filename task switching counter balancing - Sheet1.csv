@@ -1,0 +1,17 @@
+co,posture,cue dashed,cue solid,shape left,shape right,color left,color right,filename
+1,standing,shape,color,triangle,square,blue,yellow,cond-01.xls
+2,standing,shape,color,square,triangle,blue,yellow,cond-02.xls
+3,standing,shape,color,triangle,square,yellow,blue,cond-03.xls
+4,standing,shape,color,square,triangle,yellow,blue,cond-04.xls
+5,standing,color,shape,triangle,square,blue,yellow,cond-05.xls
+6,standing,color,shape,square,triangle,blue,yellow,cond-06.xls
+7,standing,color,shape,triangle,square,yellow,blue,cond-07.xls
+8,standing,color,shape,square,triangle,yellow,blue,cond-08.xls
+9,sitting,shape,color,triangle,square,blue,yellow,cond-09.xls
+10,sitting,shape,color,square,triangle,blue,yellow,cond-10.xls
+11,sitting,shape,color,triangle,square,yellow,blue,cond-11.xls
+12,sitting,shape,color,square,triangle,yellow,blue,cond-12.xls
+13,sitting,color,shape,triangle,square,blue,yellow,cond-13.xls
+14,sitting,color,shape,square,triangle,blue,yellow,cond-14.xls
+15,sitting,color,shape,triangle,square,yellow,blue,cond-15.xls
+16,sitting,color,shape,square,triangle,yellow,blue,cond-16.xls
