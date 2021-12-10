@@ -17,13 +17,21 @@ options(width = 100)
 if(!require("pacman")) install.packages("pacman")
 pacman::p_load(knitr, rmarkdown, yaml, bookdown, cowplot, pals, viridis, renv, 
                tidyverse, parallel, optimParallel, ez, psychReport, sjstats, 
-               rstatix, corrplot, superb, apaTables, afex)
+               rstatix, corrplot, superb, apaTables, afex, readxl, rlang)
 
 #Create plots and tables directory 
   dir.create(file.path(getwd(),"/plots"),  showWarnings = F)
   
 #Get the working directory
   workingdir <- getwd()
+  
+#Kludge so ggforestplot doesn't need to be installed, b/c it requires devtools 
+  source(paste0(workingdir, "/fcts/theme_forest.R"))
+  source(paste0(workingdir, "/fcts/ng_colours.R"))
+  source(paste0(workingdir, "/fcts/geom_effect.R"))
+#Modified version of forestplot from ggforestplot
+  #This modded version is from: https://osf.io/bxpjc/
+  source(paste0(workingdir, "/fcts/mod.forestplot.R"))
 
 
 ```
@@ -260,4 +268,88 @@ output_rt <- aovEffectSize(exp1_anova, effectSize = "pes")
 output_rt <- data.frame(output_rt$ANOVA)
 write.csv(output_rt, "Task_switching_ANOVA_RT.csv")
 output_rt
+```
+
+
+## Reproduce ANOVA for Smith et al. task-switching data
+```{r}
+#load acc data
+Smith_Exp2_acc <- read_excel("StandingData.xlsx", 
+                             sheet = "Exp2Acc")
+
+head(Smith_Exp2_acc)
+
+#Drop last row with comment
+Smith_Exp2_acc <- Smith_Exp2_acc[1:30,]
+
+#Restructure from wide to narrow, using tidyr
+Smith_exp2_acc_narrow <- Smith_Exp2_acc %>%
+  gather(v, accuracy, colnames(Smith_Exp2_acc)[2:9]) %>%
+  separate(v, c("posture", "con", "switch")) %>%
+  arrange(subj)
+
+
+Smith_exp2_acc_anova <- ezANOVA(Smith_exp2_acc_narrow,
+                                dv = accuracy,
+                                wid = subj,
+                                within = .(posture, con, switch),
+                                type = 3,
+                                detailed = TRUE,
+                                return_aov=F
+                                )
+
+Smith_exp2_acc_anova
+
+output_Smith_exp2_acc <- aovEffectSize(Smith_exp2_acc_anova, effectSize = "pes")
+output_Smith_exp2_acc <- data.frame(output_Smith_exp2_acc$ANOVA)
+write.csv(output_Smith_exp2_acc, "Smith_Exp2_ANOVA_acc.csv")
+output_Smith_exp2_acc
+
+#plot acc effect sizes for our results and Smith together
+#Check that ANOVA tables (rows) match
+output_acc$Effect
+output_Smith_exp2_acc$Effect
+
+ts.acc.pes <- data.frame(matrix(nrow = 8, ncol = 3))
+ts.acc.pes[1] <- output_acc$Effect
+ts.acc.pes[2] <- output_acc$pes
+ts.acc.pes[3] <- output_Smith_exp2_acc$pes
+
+colnames(ts.acc.pes) <- c("Effect", "Current", "Original")
+plot(ts.acc.pes$Current[2:8], ts.acc.pes$Original[2:8])
+lines(x = c(0,1), y = c(0,1))
+
+#Exact proportion of current to original effect: ~9%
+ts.acc.pes$Current[6]/ts.acc.pes$Original[6]
+
+#Compare current vs. original effect sizes
+interaction.original <- 
+get.ci.partial.eta.squared(output_Smith_exp2_acc$F[6], 
+                           output_Smith_exp2_acc$DFn[6],
+                           output_Smith_exp2_acc$DFd[6],
+                           conf.level = 0.90)
+
+ts.acc.pes.int <- data.frame(matrix(nrow = 2, ncol = 5))
+colnames(ts.acc.pes.int) <- c("Exp", "Effect.size", "CI.Lower", "CI.Upper", "name")
+ts.acc.pes.int[1] <- c("Current", "Original")
+ts.acc.pes.int[1,2:4] <- c(ts.acc.pes$Current[6], data.frame(interaction_effect_CI))
+ts.acc.pes.int[2,2:4] <- c(ts.acc.pes$Original[6], data.frame(interaction.original))
+ts.acc.pes.int[1:2,5] <- c("Accuracy", "Accuracy")
+#Graph comparison of key effects for all three experiments- Similar to forest plot in sig
+#filtering paper? 
+forest.colors <- c("black", "red")
+
+ts.acc.pes.int$Exp <- as.factor(ts.acc.pes.int$Exp)
+
+str(ts.acc.pes.int)
+forest.comp <- mod.forestplot(df = ts.acc.pes.int,
+                              estimate = Effect.size,
+                              ci.lower = CI.Lower,
+                              ci.upper = CI.Upper,
+                              colour = Exp,
+                              xlab = "Partial Eta-Squared"
+) + 
+  scale_color_manual(values = forest.colors) 
+
+forest.comp
 ```
