@@ -1,10 +1,12 @@
 ---
 title: "Task Switching Replication"
-author: "Jon Bakdash & Laura Marusich"
+author: "Laura Marusich and Jon Bakdash"
 date: "`r Sys.Date()`"
 output:
   pdf_document: 
     latex_engine: xelatex
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
@@ -15,7 +17,7 @@ options(width = 100)
 if(!require("pacman")) install.packages("pacman")
 pacman::p_load(knitr, rmarkdown, yaml, bookdown, cowplot, pals, viridis, renv, 
                tidyverse, parallel, optimParallel, ez, psychReport, sjstats, 
-               rstatix, corrplot, superb)
+               rstatix, corrplot, superb, apaTables, afex)
 
 #Create plots and tables directory 
   dir.create(file.path(getwd(),"/plots"),  showWarnings = F)
@@ -70,11 +72,10 @@ all(blocktrials$firsttrial == "buffer")
                            summarize(Accuracy    = mean(correct_bin))
    
 #find participants with less than 80% accuracy
+   #2, 8, 15, 44, 49, 51
    low_acc_subs <- ts_overall_acc %>% filter(Accuracy < 0.80) %>%
      pull(participant)
   
-#Drop participants w/<=80% acc
-  #8, 49, 44, 2, 15, 51
 
      task_switching_raw3 <- task_switching_raw2 %>% 
                               filter(!(participant %in% low_acc_subs))
@@ -88,7 +89,7 @@ all(blocktrials$firsttrial == "buffer")
                                 switchTrialType) %>%
                       summarize(Accuracy    = mean(correct_bin))
   
-#Convert data to wide format 
+#Convert data to wide format (for statview/SPSS/etc) 
   ts_acc_mean_wide <- ts_acc_mean %>%
                         pivot_wider(names_from = c(posture, 
                                                    congruentTrialType,
@@ -104,11 +105,12 @@ all(blocktrials$firsttrial == "buffer")
   ts_acc_mean$switchTrialType <- as.factor(ts_acc_mean$switchTrialType)
   str(ts_acc_mean)
   
-  #Total N = 51
+  #Total N = 51 (6 dropped for acc < 80%)
   length(unique(ts_acc_mean$participant))
 ```
 
 ## Plots and Analyses 
+### Accuracy
 ```{r, echo = TRUE}
 #Accuracy by participant, before drops
   hist(ts_overall_acc$Accuracy)
@@ -124,46 +126,83 @@ exp1_anova <- ezANOVA(ts_acc_mean,
                       detailed = TRUE,
                       return_aov = T
                       )
+
 #data.frame(exp1_anova$ANOVA)
-output1 <- aovEffectSize(exp1_anova, effectSize = "pes")
-output1 <- data.frame(output1$ANOVA)
+output_acc <- aovEffectSize(exp1_anova, effectSize = "pes")
+output_acc <- data.frame(output_acc$ANOVA)
+write.csv(output_acc, "Task_switching_ANOVA_acc.csv")
+output_acc
+
+#Calculate confidence interval: PES for posture x switch/condition interaction
+#using ANOVA results            (partial eta-squared)
+interaction_effect_CI <-
+get.ci.partial.eta.squared(exp1_anova$ANOVA$F[6], 
+                           exp1_anova$ANOVA$DFn[6],
+                           exp1_anova$ANOVA$DFd[6],
+                           conf.level = 0.90) #90% CI is the  convention for PES
+interaction_effect_CI
+# This almost works for getting CIs around all effects....
+# test.model <- 
+#    aov_car(Accuracy ~  
+#            posture*congruentTrialType*switchTrialType +
+#            Error(participant/posture*congruentTrialType *switchTrialType),
+#            ts_acc_mean, anova_table = (es = "pes"),
+#            return = "aov", 
+#            include_aov = T,
+#            type = 3)
+# # test.model
+# anova_stats(test.model)
+
+#The CIs around effect sizes are calculated using Type I sums of squares?
+#' ## Type of Sums of Squares
+#' The sums of squares (or *F* statistics) used for the computation of the
+#' effect sizes is based on those returned by `anova(model)` (whatever those may
+#' be - for `aov` and `aovlist` these are *type-1* sums of squares; for
+#' `lmerMod` (and `lmerModLmerTest`) these are *type-3* sums of squares)
+# test.pes<-
+# effectsize::eta_squared(test.model,     
+#                         alternative = "two.sided",
+#                         ci = 0.90,
+#                         partial = T,
+#                         verbose = T)
+# 
+#https://mran.microsoft.com/snapshot/2018-06-30/web/packages/sjstats/vignettes/anova-statistics.html
+
+#Below function won't work with an afex or aov object for an rm ANOVA
+#car::Anova(..., type = 3)
 
 congruent.labs <- c("Congruent", "Incongruent")
 names(congruent.labs) <- c("1", "2")
 
 #make plot like Smith et al's
+acc_plot <-
 superbPlot(ts_acc_mean_wide,
            WSFactors = c("Condition(2)", "Congruent(2)", "Posture(2)"),
            variables = colnames(ts_acc_mean_wide)[2:9],
-           errorbar = "SE",
+           errorbar = "SE", #Tempted to change to CI, should stay SE to be consistent with SMith
            plotStyle = "line",
            factorOrder = c("Condition","Posture","Congruent"),
            adjustments = list(purpose = "difference"))+
-  theme_classic()+
+  theme_classic() +
+  ylim(0.77, 1) + #Trying to make ylim same as the Smith w/o cutting off error bars
   facet_wrap(vars(Congruent), labeller = labeller(Congruent = congruent.labs)) +
   scale_x_discrete(labels=c("1" = "No Switch", "2" = "Switch"))+
-  scale_color_manual(values=c("#E69F00", "#0072B2"), labels = c("Sitting", "Standing")) +
+  scale_color_manual(values=c("#E69F00", "#0072B2"), 
+                     labels = c("Sitting", "Standing")) +
   labs(y = "Accuracy")
 
 
+ggsave(acc_plot, 
+       file = "plots/acc_plot.pdf", 
+       units = "in",
+       width = 6.62, 
+       height = 5.50,
+       dpi = 600)
 
-# write.csv(output, "output_ez.csv")
-#importantly there was a significant condition [switch] × posture interaction,
-#F(1, 29) = 5.54, p = .026, η2p = .16.
-#posture:switchTrialType   1  52 6.705827e-03 0.15814085 2.205015e+00
-#6.016033e-01       1.117445e-04
-#p = 0.14
-#GES = 0.07
-# exp1_anova.b <-  aov(Accuracy ~  
-#                      posture*congruentTrialType*switchTrialType +
-#                      Error(participant/posture*congruentTrialType*switchTrialType),
-#                      ts_acc_mean)
-# #str(ts_acc_mean)
-# summary(exp1_anova.b)
-# output <- anova_stats(exp1_anova.b)
-# write.csv(output, "output_aov.csv")
+acc_plot
 ```
 
+### RT for correct trials only 
 ```{r}
 #look at reaction time for correct trials?
 ts_correct_only <- task_switching_raw3 %>%
@@ -183,7 +222,7 @@ ts_rt_mean <- ts_correct_only %>%
                                                    switchTrialType), 
                                     values_from =   mean_rt)
   
-  
+RT_plot <- 
   superbPlot(ts_rt_mean_wide,
            WSFactors = c("Condition(2)", "Congruent(2)", "Posture(2)"),
            variables = colnames(ts_acc_mean_wide)[2:9],
@@ -195,8 +234,18 @@ ts_rt_mean <- ts_correct_only %>%
   facet_wrap(vars(Congruent), labeller = labeller(Congruent = congruent.labs)) +
   scale_x_discrete(labels=c("1" = "No Switch", "2" = "Switch"))+
   scale_color_manual(values=c("#E69F00", "#0072B2"), labels = c("Sitting", "Standing")) +
-  labs(y = "Reaction Time")
+  labs(y = "Reaction Time (ms)")
+
   
+ggsave(RT_plot, 
+       file = "plots/RT_plot.pdf", 
+       units = "in",
+       width = 6.62, 
+       height = 5.50,
+       dpi = 600)
+
+RT_plot
+
   exp1_anova_rt <- ezANOVA(ts_rt_mean, 
                       dv = mean_rt, 
                       wid = participant, 
@@ -205,10 +254,10 @@ ts_rt_mean <- ts_correct_only %>%
                       detailed = TRUE,
                       return_aov = T
                       )
+
 #data.frame(exp1_anova$ANOVA)
 output_rt <- aovEffectSize(exp1_anova, effectSize = "pes")
 output_rt <- data.frame(output_rt$ANOVA)
-
-
-
+write.csv(output_rt, "Task_switching_ANOVA_RT.csv")
+output_rt
 ```
