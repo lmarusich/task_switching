@@ -30,7 +30,7 @@ pacman::p_load(knitr, rmarkdown, yaml, bookdown, cowplot, pals, viridis, renv,
 ```{r}
 
 #Import current data
-  task_switching_raw <- read.csv(paste0(workingdir, "/task-switching-replication-recoded.csv"))
+  task_switching_raw <- read.csv(paste0(workingdir, "/task-switching-replication-recoded-2.csv"))
   head(task_switching_raw)
   
 #does every person have 392 trials?
@@ -71,27 +71,27 @@ all(blocktrials$firsttrial == "buffer")
    
 #find participants with less than 80% accuracy
    low_acc_subs <- ts_overall_acc %>% filter(Accuracy < 0.80) %>%
-     select(participant)
+     pull(participant)
   
 #Drop participants w/<=80% acc
   #8, 49, 44, 2, 15, 51
 
      task_switching_raw3 <- task_switching_raw2 %>% 
-                              filter(!(participant %in% low_acc_subs$participant))
+                              filter(!(participant %in% low_acc_subs))
    
 #Calc mean Acc by participant and conditions (posture, con, switch)  
   #Narrow format 
   ts_acc_mean <- task_switching_raw3 %>%
                       group_by(participant, 
                                posture,
-                               congruantTrialType, 
+                               congruentTrialType, 
                                 switchTrialType) %>%
                       summarize(Accuracy    = mean(correct_bin))
   
 #Convert data to wide format 
   ts_acc_mean_wide <- ts_acc_mean %>%
                         pivot_wider(names_from = c(posture, 
-                                                   congruantTrialType,
+                                                   congruentTrialType,
                                                    switchTrialType), 
                                     values_from =   Accuracy)
   
@@ -100,11 +100,11 @@ all(blocktrials$firsttrial == "buffer")
   ts_acc_mean <- data.frame(ts_acc_mean)
   ts_acc_mean$posture <- as.factor(ts_acc_mean$posture)
   ts_acc_mean$participant <- as.factor(ts_acc_mean$participant)
-  ts_acc_mean$congruantTrialType <- as.factor(ts_acc_mean$congruantTrialType)
+  ts_acc_mean$congruentTrialType <- as.factor(ts_acc_mean$congruentTrialType)
   ts_acc_mean$switchTrialType <- as.factor(ts_acc_mean$switchTrialType)
   str(ts_acc_mean)
   
-  #Total N = 48
+  #Total N = 51
   length(unique(ts_acc_mean$participant))
 ```
 
@@ -119,7 +119,7 @@ all(blocktrials$firsttrial == "buffer")
 exp1_anova <- ezANOVA(ts_acc_mean, 
                       dv = Accuracy, 
                       wid = participant, 
-                      within = .(posture, congruantTrialType, switchTrialType), 
+                      within = .(posture, congruentTrialType, switchTrialType), 
                       type = 3, 
                       detailed = TRUE,
                       return_aov = T
@@ -155,8 +155,8 @@ superbPlot(ts_acc_mean_wide,
 #p = 0.14
 #GES = 0.07
 # exp1_anova.b <-  aov(Accuracy ~  
-#                      posture*congruantTrialType*switchTrialType +
-#                      Error(participant/posture*congruantTrialType*switchTrialType),
+#                      posture*congruentTrialType*switchTrialType +
+#                      Error(participant/posture*congruentTrialType*switchTrialType),
 #                      ts_acc_mean)
 # #str(ts_acc_mean)
 # summary(exp1_anova.b)
@@ -172,14 +172,14 @@ ts_correct_only <- task_switching_raw3 %>%
 ts_rt_mean <- ts_correct_only %>%
                       group_by(participant, 
                                posture,
-                               congruantTrialType, 
+                               congruentTrialType, 
                                 switchTrialType) %>%
                       summarize(mean_rt    = mean(reactionTime))
 
 #Convert data to wide format 
   ts_rt_mean_wide <- ts_rt_mean %>%
                         pivot_wider(names_from = c(posture, 
-                                                   congruantTrialType,
+                                                   congruentTrialType,
                                                    switchTrialType), 
                                     values_from =   mean_rt)
   
@@ -200,7 +200,7 @@ ts_rt_mean <- ts_correct_only %>%
   exp1_anova_rt <- ezANOVA(ts_rt_mean, 
                       dv = mean_rt, 
                       wid = participant, 
-                      within = .(posture, congruantTrialType, switchTrialType), 
+                      within = .(posture, congruentTrialType, switchTrialType), 
                       type = 3, 
                       detailed = TRUE,
                       return_aov = T
