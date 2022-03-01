@@ -264,7 +264,7 @@ RT_plot
                       )
 
 #data.frame(exp1_anova$ANOVA)
-output_rt <- aovEffectSize(exp1_anova, effectSize = "pes")
+output_rt <- aovEffectSize(exp1_anova_rt, effectSize = "pes")
 output_rt <- data.frame(output_rt$ANOVA)
 write.csv(output_rt, "Task_switching_ANOVA_RT.csv")
 output_rt
