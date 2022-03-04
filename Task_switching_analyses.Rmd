@@ -36,6 +36,21 @@ pacman::p_load(knitr, rmarkdown, yaml, bookdown, cowplot, pals, viridis, renv,
 
 ```
 
+#Summarize Demographics
+```{r}
+demo_raw <- read.csv(paste0(workingdir, "/Task Switching_Demographics_Data.csv"), skip = 1) %>%
+  slice(-1) %>%
+  select(-c(Response.Type,IP.Address, Recipient.Last.Name:Distribution.Channel))
+colnames(demo_raw)[9:14] <- c("Gender.Pick", "Gender.Text","Age","Race.Pick","Race,Text","Eng.First")
+
+#59 records
+#first two are test data
+# need to match up the 6 dropped participants from behavioral data
+
+
+```
+
+
 #Read in and Check Raw Data
 ```{r}
 
@@ -134,6 +149,14 @@ exp1_anova <- ezANOVA(ts_acc_mean,
                       detailed = TRUE,
                       return_aov = T
                       )
+
+exp1_stats <- ezStats(ts_acc_mean, 
+                      dv = Accuracy, 
+                      wid = participant, 
+                      within = .(posture, congruentTrialType, switchTrialType), 
+                      type = 3
+                      )
+write.csv(exp1_stats[ ,-7], file = "Task_Switching_Descriptives_ACC.csv", row.names = F)
 
 #data.frame(exp1_anova$ANOVA)
 output_acc <- aovEffectSize(exp1_anova, effectSize = "pes")
@@ -262,6 +285,14 @@ RT_plot
                       detailed = TRUE,
                       return_aov = T
                       )
+  
+  exp1_stats_rt <- ezStats(ts_rt_mean, 
+                      dv = mean_rt, 
+                      wid = participant, 
+                      within = .(posture, congruentTrialType, switchTrialType), 
+                      type = 3
+                      )
+write.csv(exp1_stats_rt[ ,-7], file = "Task_Switching_Descriptives_RT.csv", row.names = F)
 
 #data.frame(exp1_anova$ANOVA)
 output_rt <- aovEffectSize(exp1_anova_rt, effectSize = "pes")

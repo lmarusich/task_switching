@@ -1,0 +1,9 @@
+"posture","congruentTrialType","switchTrialType","N","Mean","SD"
+"sitting","congruent","noswitch",51,0.547510038282252,0.111385463666338
+"sitting","congruent","switch",51,0.602100142438298,0.110670234887099
+"sitting","incongruent","noswitch",51,0.56979501516497,0.119343713250481
+"sitting","incongruent","switch",51,0.648860045001529,0.130632668276322
+"standing","congruent","noswitch",51,0.541538317423733,0.104430842997942
+"standing","congruent","switch",51,0.602732161683423,0.110354511135643
+"standing","incongruent","noswitch",51,0.572670328586317,0.103376395709502
+"standing","incongruent","switch",51,0.648825933108266,0.12519850474449
