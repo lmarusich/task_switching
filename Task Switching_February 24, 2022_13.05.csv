@@ -1,0 +1,66 @@
+ID#,StartDate,EndDate,Status,IPAddress,Progress,Duration (in seconds),Finished,RecordedDate,ResponseId,RecipientLastName,RecipientFirstName,RecipientEmail,ExternalReference,LocationLatitude,LocationLongitude,DistributionChannel,UserLanguage,Q3,Q3_3_TEXT,Q4,Q5,Q5_9_TEXT,Q10
+,Start Date,End Date,Response Type,IP Address,Progress,Duration (in seconds),Finished,Recorded Date,Response ID,Recipient Last Name,Recipient First Name,Recipient Email,External Data Reference,Location Latitude,Location Longitude,Distribution Channel,User Language,What is your gender? - Selected Choice,What is your gender? - Other (please specify) - Text,"Type your age in years (e.g., 24):","Pick
+the category below that best describes your ethnic/racial background. I
+consider myself to be... - Selected Choice","Pick
+the category below that best describes your ethnic/racial background. I
+consider myself to be... - Other - Text",Is English your first language?
+,"{""ImportId"":""startDate"",""timeZone"":""America/Denver""}","{""ImportId"":""endDate"",""timeZone"":""America/Denver""}","{""ImportId"":""status""}","{""ImportId"":""ipAddress""}","{""ImportId"":""progress""}","{""ImportId"":""duration""}","{""ImportId"":""finished""}","{""ImportId"":""recordedDate"",""timeZone"":""America/Denver""}","{""ImportId"":""_recordId""}","{""ImportId"":""recipientLastName""}","{""ImportId"":""recipientFirstName""}","{""ImportId"":""recipientEmail""}","{""ImportId"":""externalDataReference""}","{""ImportId"":""locationLatitude""}","{""ImportId"":""locationLongitude""}","{""ImportId"":""distributionChannel""}","{""ImportId"":""userLanguage""}","{""ImportId"":""QID3""}","{""ImportId"":""QID3_3_TEXT""}","{""ImportId"":""QID4_TEXT""}","{""ImportId"":""QID5""}","{""ImportId"":""QID5_28_TEXT""}","{""ImportId"":""QID10_TEXT""}"
+test,7/29/2021 12:16,7/29/2021 14:32,IP Address,68.232.22.178,17,8161,FALSE,8/5/2021 14:33,R_1eLuRYRkHitX5Dk,,,,,,,anonymous,EN,,,,,,
+test,8/11/2021 16:27,8/18/2021 15:44,IP Address,32.141.152.14,100,602213,TRUE,8/18/2021 15:44,R_1ews5BXtZJ4hsEu,,,,,33.18760681,-96.12680054,anonymous,EN,,,,,,yes
+1,11/10/2021 8:48,11/10/2021 9:48,IP Address,68.232.23.236,100,3580,TRUE,11/10/2021 9:48,R_x635o84w86Sq6TT,,,,,33.24339294,-95.91100311,anonymous,EN,Woman,,19,Hispanic/Latino/Latina/Latinx,,no
+2,11/10/2021 10:01,11/10/2021 10:47,IP Address,68.232.23.236,100,2740,TRUE,11/10/2021 10:47,R_xtkHf6em51bMDPH,,,,,33.24339294,-95.91100311,anonymous,EN,Woman,,18,Black / African American,,No
+3,11/10/2021 10:52,11/10/2021 11:46,IP Address,68.232.23.236,100,3228,TRUE,11/10/2021 11:46,R_337tFnp8M0kbEIE,,,,,33.24339294,-95.91100311,anonymous,EN,Woman,,18,White /European American,,yes
+4,11/10/2021 12:42,11/10/2021 12:42,IP Address,68.232.23.236,100,25,TRUE,11/10/2021 12:42,R_1rHYH3B0dyfp6KC,,,,,33.24339294,-95.91100311,anonymous,EN,Woman,,20,Black / African American,,yes
+5,11/10/2021 12:44,11/10/2021 13:47,IP Address,68.232.23.236,100,3779,TRUE,11/10/2021 13:47,R_svdSuLke2J8pxT3,,,,,33.24339294,-95.91100311,anonymous,EN,Man,,19,White /European American,,yes
+6,11/10/2021 14:32,11/10/2021 14:32,IP Address,68.232.23.236,100,33,TRUE,11/10/2021 14:32,R_1K11gi6IFT3EbA3,,,,,33.24339294,-95.91100311,anonymous,EN,Man,,21,Black / African American,,Yes
+7,11/11/2021 8:42,11/11/2021 14:32,IP Address,68.232.23.236,100,21007,TRUE,11/11/2021 14:32,R_2rrpUN4UfJIocFX,,,,,33.24339294,-95.91100311,anonymous,EN,Woman,,19,Black / African American,,yes
+8,11/11/2021 14:47,11/11/2021 16:18,IP Address,68.232.23.236,100,5451,TRUE,11/11/2021 16:18,R_1nSyVbRIArEhJKq,,,,,33.24339294,-95.91100311,anonymous,EN,Woman,,19,Black / African American,,no
+9,11/12/2021 8:47,11/12/2021 9:38,IP Address,68.232.23.236,100,3074,TRUE,11/12/2021 9:38,R_2EFuwfaWulW5SQZ,,,,,33.24339294,-95.91100311,anonymous,EN,Man,,21,White /European American,,yes
+10,11/12/2021 9:42,11/12/2021 10:36,IP Address,68.232.23.236,100,3221,TRUE,11/12/2021 10:36,R_2dyhLBkhF3DVaIt,,,,,33.24339294,-95.91100311,anonymous,EN,Woman,,21,White /European American,,yes
+11,11/12/2021 10:39,11/12/2021 11:57,IP Address,68.232.23.236,100,4664,TRUE,11/12/2021 11:57,R_1DCDxEaJNCy41qW,,,,,33.24339294,-95.91100311,anonymous,EN,Woman,,19,White /European American,,yes
+12,11/12/2021 13:14,11/12/2021 13:15,IP Address,68.232.23.236,100,27,TRUE,11/12/2021 13:15,R_2qCSJpfufE08SQ5,,,,,33.24339294,-95.91100311,anonymous,EN,Woman,,19,Asian /South Pacific Islander,,Yes
+13,11/12/2021 13:18,11/15/2021 9:22,IP Address,68.232.23.236,100,245054,TRUE,11/15/2021 9:22,R_082oSEiBeDikWwF,,,,,33.24339294,-95.91100311,anonymous,EN,Man,,21,White /European American,,yes
+14,11/15/2021 9:31,11/15/2021 10:39,IP Address,68.232.23.236,100,4043,TRUE,11/15/2021 10:39,R_31EteMpOlgDCJ6I,,,,,33.24339294,-95.91100311,anonymous,EN,Man,,23,White /European American,,yes
+15,11/15/2021 14:22,11/15/2021 14:23,IP Address,68.232.23.236,100,24,TRUE,11/15/2021 14:23,R_4NPc0ygtTIBEI81,,,,,33.24339294,-95.91100311,anonymous,EN,Woman,,20,Black / African American,,yes
+16,11/15/2021 14:33,11/15/2021 15:05,IP Address,68.232.20.228,100,1905,TRUE,11/15/2021 15:05,R_33pT6OQQOUF16Wj,,,,,33.24339294,-95.91100311,anonymous,EN,Woman,,20,White /European American,,Yes
+17,11/16/2021 8:47,11/16/2021 9:20,IP Address,68.232.21.17,100,1939,TRUE,11/16/2021 9:20,R_4Guej8VRLzOJnTH,,,,,33.24339294,-95.91100311,anonymous,EN,Woman,,20,Hispanic/Latino/Latina/Latinx,,yes
+18,11/16/2021 9:24,11/16/2021 10:33,IP Address,68.232.21.17,100,4154,TRUE,11/16/2021 10:33,R_3HH0WmCIJndNNfo,,,,,33.24339294,-95.91100311,anonymous,EN,Woman,,19,Black / African American,,Yes
+19,11/16/2021 14:29,11/16/2021 15:23,IP Address,68.232.21.17,100,3247,TRUE,11/16/2021 15:23,R_DJe23kPKYMEDP1v,,,,,33.24339294,-95.91100311,anonymous,EN,Other (please specify),non binaary,21,White /European American,,yes
+20,11/17/2021 8:50,11/17/2021 9:26,IP Address,68.232.23.157,100,2106,TRUE,11/17/2021 9:26,R_3M5JCrssHOq0ZiX,,,,,33.24339294,-95.91100311,anonymous,EN,Man,,21,Hispanic/Latino/Latina/Latinx,,No
+21,11/17/2021 9:29,11/17/2021 10:51,IP Address,68.232.23.157,100,4915,TRUE,11/17/2021 10:51,R_1I72zAvxYaEDgG9,,,,,33.24339294,-95.91100311,anonymous,EN,Man,,20,Hispanic/Latino/Latina/Latinx,,no
+22,11/17/2021 10:54,11/17/2021 12:38,IP Address,68.232.23.157,100,6287,TRUE,11/17/2021 12:38,R_svdqJ9uinqrRQxr,,,,,33.24339294,-95.91100311,anonymous,EN,Woman,,20,Black / African American,,yes
+23,11/18/2021 8:46,11/18/2021 10:39,IP Address,68.232.21.78,100,6763,TRUE,11/18/2021 10:39,R_1igIiCeMz9Ktb2o,,,,,33.24339294,-95.91100311,anonymous,EN,Woman,,20,White /European American,,yes
+24,11/18/2021 10:42,11/18/2021 12:43,IP Address,68.232.21.78,100,7277,TRUE,11/18/2021 12:43,R_2VxzHwxC8zjphsa,,,,,33.24339294,-95.91100311,anonymous,EN,Woman,,18,Native American / American Indian,,Yes
+25,11/18/2021 13:20,11/19/2021 8:48,IP Address,68.232.23.228,100,70082,TRUE,11/19/2021 8:48,R_3HZlJfDcQEnmxbE,,,,,33.24339294,-95.91100311,anonymous,EN,Woman,,18,White /European American,,yes
+26,11/19/2021 8:48,11/19/2021 9:21,IP Address,68.232.23.228,100,1939,TRUE,11/19/2021 9:21,R_1EUYbKzgUFfbjYB,,,,,33.24339294,-95.91100311,anonymous,EN,Man,,21,White /European American,,Yes
+27,11/19/2021 9:47,11/19/2021 12:10,IP Address,68.232.23.228,100,8566,TRUE,11/19/2021 12:10,R_1lc4Oj5g5FsMsJT,,,,,33.24339294,-95.91100311,anonymous,EN,Woman,,18,Black / African American,,yes
+28,11/19/2021 12:10,11/19/2021 12:46,IP Address,68.232.23.228,100,2148,TRUE,11/19/2021 12:46,R_2SraUNgrcDs28UT,,,,,33.24339294,-95.91100311,anonymous,EN,Woman,,19,White /European American,,yes
+29,11/19/2021 13:14,11/19/2021 14:04,IP Address,68.232.22.13,100,2979,TRUE,11/19/2021 14:04,R_3s4kk86uGNVdml7,,,,,33.24339294,-95.91100311,anonymous,EN,Woman,,18,Black / African American,,Yes
+30,11/19/2021 15:04,11/22/2021 8:53,IP Address,68.232.22.13,100,236947,TRUE,11/22/2021 8:53,R_2EiePZM7MhWsGpv,,,,,33.24339294,-95.91100311,anonymous,EN,Woman,,21,White /European American,,yes
+31,11/22/2021 8:53,11/22/2021 9:33,IP Address,68.232.22.13,100,2386,TRUE,11/22/2021 9:33,R_2U2QnQvyzJwh7LO,,,,,33.24339294,-95.91100311,anonymous,EN,Woman,,21,Black / African American,,yes
+32,11/22/2021 9:36,11/22/2021 13:59,IP Address,68.232.22.13,100,15767,TRUE,11/22/2021 13:59,R_3k08Jl5bQKoRqdp,,,,,33.24339294,-95.91100311,anonymous,EN,Woman,,20,White /European American,,yes
+33,11/22/2021 15:11,11/22/2021 15:12,IP Address,68.232.22.13,100,27,TRUE,11/22/2021 15:12,R_2TRWl1ycrI690bs,,,,,33.24339294,-95.91100311,anonymous,EN,Man,,18,Hispanic/Latino/Latina/Latinx,,yes
+34,11/23/2021 8:45,11/23/2021 9:33,IP Address,68.232.22.13,100,2872,TRUE,11/23/2021 9:33,R_240Dc386ZfuAoOD,,,,,33.24339294,-95.91100311,anonymous,EN,Man,,20,Black / African American,,Yes
+35,11/23/2021 9:46,11/23/2021 10:57,IP Address,68.232.22.13,100,4288,TRUE,11/23/2021 10:57,R_SVieZUGHD3UY73r,,,,,33.24339294,-95.91100311,anonymous,EN,Man,,23,Asian /South Pacific Islander,,no
+36,11/23/2021 11:01,11/23/2021 12:45,IP Address,68.232.22.13,100,6268,TRUE,11/23/2021 12:45,R_3FRNZI8nZNGErJv,,,,,33.24339294,-95.91100311,anonymous,EN,Man,,25,Central Asian /Indian /Pakistani,,No
+37,11/23/2021 13:48,11/23/2021 13:50,IP Address,68.232.22.13,100,120,TRUE,11/23/2021 13:50,R_5pDbjGmkZ23H4qZ,,,,,33.24339294,-95.91100311,anonymous,EN,Man,,24,Central Asian /Indian /Pakistani,,no
+38,11/29/2021 9:21,11/29/2021 9:22,IP Address,68.232.21.134,100,39,TRUE,11/29/2021 9:22,R_80MnqO31E6P7uKt,,,,,33.24339294,-95.91100311,anonymous,EN,Man,,21,Black / African American,,yes
+39,11/29/2021 10:48,11/29/2021 10:48,IP Address,68.232.21.134,100,27,TRUE,11/29/2021 10:48,R_DAhixd4oDSt6kz7,,,,,33.24339294,-95.91100311,anonymous,EN,Woman,,20,White /European American,,Yes
+40,11/29/2021 14:01,11/29/2021 14:02,IP Address,68.232.21.134,100,47,TRUE,11/29/2021 14:02,R_2TGK2tc9Mw6wRHO,,,,,33.24339294,-95.91100311,anonymous,EN,Man,,22,White /European American,,Yes
+41,11/29/2021 15:07,11/29/2021 15:07,IP Address,68.232.21.134,100,23,TRUE,11/29/2021 15:07,R_9XfElfGB6ED7Nip,,,,,33.24339294,-95.91100311,anonymous,EN,Man,,19,White /European American,,Yes
+42,11/30/2021 9:52,11/30/2021 9:52,IP Address,68.232.21.134,100,26,TRUE,11/30/2021 9:53,R_4VnVqX28MBYLdvj,,,,,33.24339294,-95.91100311,anonymous,EN,Woman,,20,Hispanic/Latino/Latina/Latinx,,yes
+43,11/30/2021 9:55,11/30/2021 10:29,IP Address,68.232.21.134,100,2041,TRUE,11/30/2021 10:29,R_23ULHEQcedMzirp,,,,,33.24339294,-95.91100311,anonymous,EN,Man,,19,Hispanic/Latino/Latina/Latinx,,Yes
+44,11/30/2021 10:33,11/30/2021 12:57,IP Address,68.232.21.134,100,8631,TRUE,11/30/2021 12:57,R_BXT5Pbtquo0Fic9,,,,,33.24339294,-95.91100311,anonymous,EN,Woman,,20,Native American / American Indian,,yes
+45,11/30/2021 12:57,11/30/2021 14:05,IP Address,68.232.21.134,100,4082,TRUE,11/30/2021 14:05,R_1gqGqfhU6ra3gND,,,,,33.24339294,-95.91100311,anonymous,EN,Woman,,18,Hispanic/Latino/Latina/Latinx,,yes
+46,11/30/2021 14:06,11/30/2021 15:27,IP Address,68.232.21.134,100,4829,TRUE,11/30/2021 15:27,R_72jper0Mlw1f5Hr,,,,,33.24339294,-95.91100311,anonymous,EN,Man,,23,Asian /South Pacific Islander,,no
+47,12/1/2021 8:41,12/1/2021 9:23,IP Address,68.232.22.14,100,2528,TRUE,12/1/2021 9:23,R_2fya1G1S2JSpFux,,,,,33.24339294,-95.91100311,anonymous,EN,Woman,,20,White /European American,,yes
+48,12/1/2021 9:27,12/1/2021 10:47,IP Address,68.232.22.14,100,4822,TRUE,12/1/2021 10:47,R_1Let3zpLj8RhoUT,,,,,33.24339294,-95.91100311,anonymous,EN,Man,,22,Black / African American,,yes
+49,12/1/2021 12:06,12/1/2021 12:49,IP Address,68.232.22.14,100,2575,TRUE,12/1/2021 12:49,R_2ruz4GD3FkXCURs,,,,,33.24339294,-95.91100311,anonymous,EN,Man,,20,Black / African American,,yes
+50,12/1/2021 14:03,12/1/2021 14:04,IP Address,68.232.22.14,100,45,TRUE,12/1/2021 14:04,R_1dbQBAicw3N5OsU,,,,,33.24339294,-95.91100311,anonymous,EN,Man,,24,Central Asian /Indian /Pakistani,,no
+51,12/1/2021 14:53,12/1/2021 14:54,IP Address,68.232.22.14,100,23,TRUE,12/1/2021 14:54,R_3nuqTIf5jWXWKkO,,,,,33.24339294,-95.91100311,anonymous,EN,Woman,,21,Black / African American,,yes
+52,12/1/2021 14:55,12/2/2021 9:23,IP Address,68.232.22.14,100,66531,TRUE,12/2/2021 9:23,R_2OJxfRv10bBiGJI,,,,,33.24339294,-95.91100311,anonymous,EN,Man,,21,White /European American,,yes
+53,12/2/2021 9:26,12/2/2021 11:12,IP Address,68.232.22.14,100,6322,TRUE,12/2/2021 11:12,R_3fpAwYiexdmam71,,,,,33.24339294,-95.91100311,anonymous,EN,Woman,,19,White /European American,,yes
+54,12/2/2021 11:14,12/2/2021 13:44,IP Address,68.232.22.14,100,8977,TRUE,12/2/2021 13:44,R_09wfuPLszH4fs7D,,,,,33.24339294,-95.91100311,anonymous,EN,Man,,18,White /European American,,Yes
+55,12/3/2021 8:44,12/3/2021 12:55,IP Address,68.232.23.198,100,15086,TRUE,12/3/2021 12:55,R_2U2QDvtHEdPEMe1,,,,,33.24339294,-95.91100311,anonymous,EN,Woman,,18,Hispanic/Latino/Latina/Latinx,,yes
+56,12/3/2021 13:55,12/3/2021 13:56,IP Address,68.232.23.198,100,21,TRUE,12/3/2021 13:56,R_3en820S0kGSnhT7,,,,,33.24339294,-95.91100311,anonymous,EN,Woman,,20,Hispanic/Latino/Latina/Latinx,,yes
+57,12/3/2021 12:57,12/3/2021 15:10,IP Address,68.232.23.198,100,7999,TRUE,12/3/2021 15:10,R_uy15X0Q8PtB9xw5,,,,,33.24339294,-95.91100311,anonymous,EN,Man,,22,Hispanic/Latino/Latina/Latinx,,yes

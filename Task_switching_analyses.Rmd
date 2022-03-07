@@ -36,22 +36,9 @@ pacman::p_load(knitr, rmarkdown, yaml, bookdown, cowplot, pals, viridis, renv,
 
 ```
 
-#Summarize Demographics
-```{r}
-demo_raw <- read.csv(paste0(workingdir, "/Task Switching_Demographics_Data.csv"), skip = 1) %>%
-  slice(-1) %>%
-  select(-c(Response.Type,IP.Address, Recipient.Last.Name:Distribution.Channel))
-colnames(demo_raw)[9:14] <- c("Gender.Pick", "Gender.Text","Age","Race.Pick","Race,Text","Eng.First")
-
-#59 records
-#first two are test data
-# need to match up the 6 dropped participants from behavioral data
 
 
-```
-
-
-#Read in and Check Raw Data
+# Read in and Check Raw Data
 ```{r}
 
 #Import current data
@@ -78,7 +65,7 @@ all(blocktrials$ntrials == 49)
 all(blocktrials$firsttrial == "buffer")
 ```
 
-#Clean Data
+# Clean Data
 ```{r}
 #Drop buffer trials
   task_switching_raw2 <- task_switching_raw %>% 
@@ -132,8 +119,60 @@ all(blocktrials$firsttrial == "buffer")
   length(unique(ts_acc_mean$participant))
 ```
 
-## Plots and Analyses 
-### Accuracy
+
+# Summarize Demographics
+```{r}
+demo_raw <- read.csv(paste0(workingdir, "/Task Switching_February 24, 2022_13.05.csv"), skip = 1) %>%
+  slice(-1) %>%
+  select(-c(Response.Type,IP.Address, Recipient.Last.Name:Distribution.Channel))
+colnames(demo_raw)[10:15] <- c("Gender.Pick", "Gender.Text","Age","Race.Pick","Race.Text","Eng.First")
+
+dim(demo_raw)
+#59 records
+#first two are test data
+# need to match up the 6 dropped participants from behavioral data
+demo_df <- demo_raw %>% 
+  filter(!(X %in% c("test", low_acc_subs)))
+dim(demo_df)
+
+demo_df <- demo_df %>%
+  mutate(Gender.New = ifelse(Gender.Pick %in% c("Man","Woman"), Gender.Pick, Gender.Text),
+         Eng.First = toupper(Eng.First))
+
+#gender breakdown
+gender_table <- demo_df %>%
+  group_by(Gender.New) %>%
+  summarize(n = n())
+gender_table
+
+#age breakdown
+hist(as.numeric(demo_df$Age),
+     main = "Histogram of Participant Ages",
+     xlab = "Participant Age")
+age_table <- demo_df %>%
+  group_by(Age) %>%
+  summarize(n = n())
+age_table
+
+#race breakdown
+race_table <- demo_df %>%
+  group_by(Race.Pick) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n))
+race_table
+
+#language breakdown
+lang_table <- demo_df %>%
+  group_by(Eng.First) %>%
+  summarize(n=n())
+lang_table
+
+
+```
+
+
+# Plots and Analyses 
+## Accuracy
 ```{r, echo = TRUE}
 #Accuracy by participant, before drops
   hist(ts_overall_acc$Accuracy)
@@ -233,7 +272,7 @@ ggsave(acc_plot,
 acc_plot
 ```
 
-### RT for correct trials only 
+## RT for correct trials only 
 ```{r}
 #look at reaction time for correct trials?
 ts_correct_only <- task_switching_raw3 %>%
