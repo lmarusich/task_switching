@@ -154,6 +154,12 @@ age_table <- demo_df %>%
   summarize(n = n())
 age_table
 
+#age mean and sd
+mean_age <- mean(as.numeric(demo_df$Age))
+sd_age <- sd(as.numeric(demo_df$Age))
+
+kable(matrix(c(mean_age, sd_age), nrow = 1), col.names = c("Mean of Age", "SD of Age"))
+
 #race breakdown
 race_table <- demo_df %>%
   group_by(Race.Pick) %>%
