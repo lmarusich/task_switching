@@ -195,6 +195,14 @@ exp1_anova <- ezANOVA(ts_acc_mean,
                       return_aov = T
                       )
 
+exp1_anova2 <- aov_ez(data = ts_acc_mean, 
+                      dv = "Accuracy", 
+                      id = "participant", 
+                      within = c("posture", "congruentTrialType", "switchTrialType"), 
+                      type = 3, 
+                      anova_table = list(es = "pes")
+                      )
+
 exp1_stats <- ezStats(ts_acc_mean, 
                       dv = Accuracy, 
                       wid = participant, 
@@ -205,7 +213,8 @@ write.csv(exp1_stats[ ,-7], file = "Task_Switching_Descriptives_ACC.csv", row.na
 
 #data.frame(exp1_anova$ANOVA)
 output_acc <- aovEffectSize(exp1_anova, effectSize = "pes")
-output_acc <- data.frame(output_acc$ANOVA)
+output_acc <- data.frame(output_acc$ANOVA) %>%
+  mutate(MSE = c(NA, exp1_anova2$anova_table$MSE), .before = F)
 write.csv(output_acc, "Task_switching_ANOVA_acc.csv")
 output_acc
 
@@ -331,6 +340,13 @@ RT_plot
                       return_aov = T
                       )
   
+  exp1_anova_rt2 <- aov_ez(data = ts_rt_mean, 
+                      dv = 'mean_rt', 
+                      id = 'participant', 
+                      within = c('posture', 'congruentTrialType', 'switchTrialType'), 
+                      type = 3
+                      )
+  
   exp1_stats_rt <- ezStats(ts_rt_mean, 
                       dv = mean_rt, 
                       wid = participant, 
@@ -341,7 +357,8 @@ write.csv(exp1_stats_rt[ ,-7], file = "Task_Switching_Descriptives_RT.csv", row.
 
 #data.frame(exp1_anova$ANOVA)
 output_rt <- aovEffectSize(exp1_anova_rt, effectSize = "pes")
-output_rt <- data.frame(output_rt$ANOVA)
+output_rt <- data.frame(output_rt$ANOVA) %>%
+  mutate(MSE = c(NA, exp1_anova_rt2$anova_table$MSE), .before = F)
 write.csv(output_rt, "Task_switching_ANOVA_RT.csv")
 output_rt
 ```
