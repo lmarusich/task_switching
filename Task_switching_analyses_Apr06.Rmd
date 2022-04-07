@@ -17,7 +17,8 @@ options(width = 100)
 if(!require("pacman")) install.packages("pacman")
 pacman::p_load(knitr, rmarkdown, yaml, bookdown, cowplot, pals, viridis, renv, 
                tidyverse, parallel, optimParallel, ez, psychReport, sjstats, 
-               rstatix, corrplot, superb, apaTables, afex, readxl, rlang)
+               rstatix, corrplot, superb, apaTables, afex, readxl, rlang,
+               ggstance, trimr)
 
 #Create plots and tables directory 
 dir.create(file.path(getwd(),"/plots"),  showWarnings = F)
@@ -26,24 +27,22 @@ dir.create(file.path(getwd(),"/plots"),  showWarnings = F)
 workingdir <- getwd()
 
 #Kludge so ggforestplot doesn't need to be installed, b/c it requires devtools 
-source(paste0(workingdir, "/fcts/theme_forest.R"))
-source(paste0(workingdir, "/fcts/ng_colours.R"))
-source(paste0(workingdir, "/fcts/geom_effect.R"))
+  source(paste0(workingdir, "/fcts/theme_forest.R"))
+  source(paste0(workingdir, "/fcts/ng_colours.R"))
+  source(paste0(workingdir, "/fcts/geom_effect.R"))
+
 #Modified version of forestplot from ggforestplot
 #This modded version is from: https://osf.io/bxpjc/
-source(paste0(workingdir, "/fcts/mod.forestplot.R"))
+  source(paste0(workingdir, "/fcts/mod.forestplot.R"))
 
 #get trimming function
-source(paste0(workingdir, "/trimming/pjTrimmingV2.R"))
-
-
+  source(paste0(workingdir, "/trimming/pjTrimmingV2.R"))
 ```
 
 
 
 # Read in and Check Raw Data
 ```{r}
-
 #Import current data
 task_switching_raw <- read.csv(paste0(workingdir, "/task-switching-replication-recoded-2.csv"))
 head(task_switching_raw)
@@ -86,6 +85,7 @@ ts_overall_acc <- task_switching_raw2 %>%
 
 #find participants with less than 80% accuracy
 #2, 8, 15, 44, 49, 51
+#First exclusion criteria
 low_acc_subs <- ts_overall_acc %>% filter(Accuracy < 0.80) %>%
   pull(participant)
 
@@ -118,8 +118,9 @@ ts_acc_mean$congruentTrialType <- as.factor(ts_acc_mean$congruentTrialType)
 ts_acc_mean$switchTrialType <- as.factor(ts_acc_mean$switchTrialType)
 str(ts_acc_mean)
 
-#Total N = 51 (6 dropped for acc < 80%)
+#Total N = 51 (6 dropped for total acc < 80%)
 length(unique(ts_acc_mean$participant))
+
 ```
 
 
@@ -229,35 +230,6 @@ interaction_effect_CI <-
                              exp1_anova$ANOVA$DFd[6],
                              conf.level = 0.90) #90% CI is the  convention for PES
 interaction_effect_CI
-# This almost works for getting CIs around all effects....
-# test.model <- 
-#    aov_car(Accuracy ~  
-#            posture*congruentTrialType*switchTrialType +
-#            Error(participant/posture*congruentTrialType *switchTrialType),
-#            ts_acc_mean, anova_table = (es = "pes"),
-#            return = "aov", 
-#            include_aov = T,
-#            type = 3)
-# # test.model
-# anova_stats(test.model)
-
-#The CIs around effect sizes are calculated using Type I sums of squares?
-#' ## Type of Sums of Squares
-#' The sums of squares (or *F* statistics) used for the computation of the
-#' effect sizes is based on those returned by `anova(model)` (whatever those may
-#' be - for `aov` and `aovlist` these are *type-1* sums of squares; for
-#' `lmerMod` (and `lmerModLmerTest`) these are *type-3* sums of squares)
-# test.pes<-
-# effectsize::eta_squared(test.model,     
-#                         alternative = "two.sided",
-#                         ci = 0.90,
-#                         partial = T,
-#                         verbose = T)
-# 
-#https://mran.microsoft.com/snapshot/2018-06-30/web/packages/sjstats/vignettes/anova-statistics.html
-
-#Below function won't work with an afex or aov object for an rm ANOVA
-#car::Anova(..., type = 3)
 
 congruent.labs <- c("Congruent", "Incongruent")
 names(congruent.labs) <- c("1", "2")
@@ -320,9 +292,10 @@ RT_plot <-
              adjustments = list(purpose = "difference"))+
   theme_classic()+
   facet_wrap(vars(Congruent), labeller = labeller(Congruent = congruent.labs)) +
-  scale_x_discrete(labels=c("1" = "No Switch", "2" = "Switch"))+
+  scale_x_discrete(labels=c("1" = "No Switch", "2" = "Switch")) +
   scale_color_manual(values=c("#E69F00", "#0072B2"), labels = c("Sitting", "Standing")) +
-  labs(y = "Reaction Time (ms)")
+  ylim(0.50, 0.70) +
+  labs(y = "Reaction Time (seconds)")
 
 
 ggsave(RT_plot, 
@@ -368,10 +341,21 @@ output_rt
 
 ## Generate RT analysis/plots for trimmed data
 ```{r}
+#Second exclusion criteria (should this be moved up?)
+#How many trials faster than 100 ms? Only a single one
+sum(ts_correct_only$reactionTime < 0.100)
+dim(ts_correct_only)
+
+too.fast.gone <- ts_correct_only %>% filter(reactionTime >= 0.100) 
+#Sanity check, one trial is dropped. Now have 17,698 trials
+dim(too.fast.gone)
 
 #perhaps double check trimmed output with trimr package?
+#Jon: Yeah, that's a very good idea: Placeholder
+#trimmingOutput.trimr <- 
 
-trimmingOutput = pjRecursiveTrim2(dataSet = ts_correct_only,
+
+trimmingOutput = pjRecursiveTrim2(dataSet = too.fast.gone,
                                   dv = "reactionTime",
                                   splitvars = c("participant",
                                                 "posture",
@@ -381,6 +365,9 @@ trimmedData=trimmingOutput[[1]]
 totalN = trimmingOutput[[2]]
 rejected = trimmingOutput[[3]]
 percentTrimmed = trimmingOutput[[4]] #this is very close to the percentage trimmed for stroop
+#2.14% of trials
+percentTrimmed
+
 Ncells = trimmingOutput[[5]] # 51 participants * 8 conditions
 
 #now use trimmedData for same analyses as above
@@ -411,7 +398,8 @@ trimmed_RT_plot <-
   facet_wrap(vars(Congruent), labeller = labeller(Congruent = congruent.labs)) +
   scale_x_discrete(labels=c("1" = "No Switch", "2" = "Switch"))+
   scale_color_manual(values=c("#E69F00", "#0072B2"), labels = c("Sitting", "Standing")) +
-  labs(y = "Reaction Time (ms)")
+  ylim(0.50, 0.70) +
+  labs(y = "Reaction Time (seconds)")
 
 ggsave(trimmed_RT_plot, 
        file = "plots/trimmed_RT_plot.pdf", 
@@ -502,10 +490,21 @@ ts.acc.pes <- data.frame(matrix(nrow = 8, ncol = 3))
 ts.acc.pes[1] <- output_acc$Effect
 ts.acc.pes[2] <- output_acc$pes
 ts.acc.pes[3] <- output_Smith_exp2_acc$pes
+ts.acc.pes[4] <- c(rep("Black", times = 5), "Red", "Black", "Black")
 
-colnames(ts.acc.pes) <- c("Effect", "Current", "Original")
-plot(ts.acc.pes$Current[2:8], ts.acc.pes$Original[2:8])
-lines(x = c(0,1), y = c(0,1))
+colnames(ts.acc.pes) <- c("Effect", "Current", "Original", "col")
+#Scatter plot of original vs. reo effects
+
+ggplot(ts.acc.pes, aes(x = Original, y = Current, colour = col)) +
+  geom_point() + 
+  geom_smooth(method = lm, se = T) + #Confidence interval is cutoff b/c values are bounded from 0 to 1
+  scale_colour_identity() +
+  xlim(-0.01, 1.01) +
+  ylim(-0.01, 1.01)
+
+# plot(ts.acc.pes$Current[2:8], 
+#      ts.acc.pes$Original[2:8])
+# lines(x = c(0,1), y = c(0,1))
 
 #Exact proportion of current to original effect: ~9%
 ts.acc.pes$Current[6]/ts.acc.pes$Original[6]
