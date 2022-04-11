@@ -48,7 +48,8 @@ source(paste0(workingdir, "/trimming/pjTrimmingV2.R"))
 # Read in and Check Raw Data
 ```{r}
 #Import current data
-task_switching_raw <- read.csv(paste0(workingdir, "/task-switching-replication-recoded-2.csv"))
+task_switching_raw <- read.csv(paste0(workingdir,
+                                      "/Data/task-switching-replication-recoded-2.csv"))
 head(task_switching_raw)
 
 #does every person have 392 trials?
@@ -130,7 +131,8 @@ length(unique(ts_acc_mean$participant))
 
 # Summarize Demographics
 ```{r}
-demo_raw <- read.csv(paste0(workingdir, "/Task Switching_February 24, 2022_13.05.csv"), skip = 1) %>%
+demo_raw <- read.csv(paste0(workingdir, "/Data/Task Switching_February 24, 2022_13.05.csv"),
+                     skip = 1) %>%
   slice(-1) %>%
   select(-c(Response.Type,IP.Address, Recipient.Last.Name:Distribution.Channel))
 colnames(demo_raw)[10:15] <- c("Gender.Pick", "Gender.Text","Age","Race.Pick","Race.Text","Eng.First")
@@ -477,7 +479,7 @@ output_trimmed_rt
 ## Reproduce ANOVA for Smith et al. task-switching data
 ```{r}
 #load acc data
-Smith_Exp2_acc <- read_excel("StandingData.xlsx", 
+Smith_Exp2_acc <- read_excel("Smith Data/StandingData.xlsx", 
                              sheet = "Exp2Acc")
 
 head(Smith_Exp2_acc)

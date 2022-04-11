@@ -121,13 +121,13 @@ exp1.labels <- c("posture", "sit", "stand",
   # Appears to includes neutral, based on df in the interaction
 
 #Load means from 3 Smith experiments
-Smith_exp1_RT <- read.csv(paste0(workingdir, "/Smith_exp1_RT.csv"))
+Smith_exp1_RT <- read.csv(paste0(workingdir, "/Smith Data/Smith_exp1_RT.csv"))
   head(Smith_exp1_RT)
 
-Smith_exp2_acc <- read.csv(paste0(workingdir, "/Smith_exp2_acc.csv")) 
+Smith_exp2_acc <- read.csv(paste0(workingdir, "/Smith Data/Smith_exp2_acc.csv")) 
   head(Smith_exp2_acc)
   
-Smith_exp3_RT <- read.csv(paste0(workingdir, "/Smith_exp3_RT.csv")) 
+Smith_exp3_RT <- read.csv(paste0(workingdir, "/Smith Data/Smith_exp3_RT.csv")) 
   head(Smith_exp3_RT)  
   
 #Create correlation matrices for design_fct  
