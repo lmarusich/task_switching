@@ -543,29 +543,92 @@ interaction.original <-
   get.ci.partial.eta.squared(output_Smith_exp2_acc$F[6], 
                              output_Smith_exp2_acc$DFn[6],
                              output_Smith_exp2_acc$DFd[6],
-                             conf.level = 0.90)
+                             conf.level = 0.90) #Typical convention for partial-eta 
 
-ts.acc.pes.int <- data.frame(matrix(nrow = 2, ncol = 5))
-colnames(ts.acc.pes.int) <- c("Exp", "Effect.size", "CI.Lower", "CI.Upper", "name")
-ts.acc.pes.int[1] <- c("Current", "Original")
-ts.acc.pes.int[1,2:4] <- c(ts.acc.pes$Current[6], data.frame(interaction_effect_CI))
-ts.acc.pes.int[2,2:4] <- c(ts.acc.pes$Original[6], data.frame(interaction.original))
-ts.acc.pes.int[1:2,5] <- c("Accuracy", "Accuracy")
+
+#Posture x congruency interaction
+rep.exp1.peta2 <- 0.002  #Approx
+rep.exp1.CI <- 
+  get.ci.partial.eta.squared(0.081, 
+                             2,
+                             98,
+                             conf.level = 0.90) 
+
+Smith.exp1.peta2 <- 0.27
+Smith.exp1.CI <- 
+  get.ci.partial.eta.squared(4.73, 
+                             2,
+                             26,
+                             conf.level = 0.90) 
+
+#Posture x set size interaction
+rep.exp3.peta2 <- 0.001 #Approx
+rep.exp3.CI <- 
+  get.ci.partial.eta.squared(0.031, 
+                             1,
+                             49,
+                             conf.level = 0.90) 
+
+Smith.exp3.peta2 <- 0.35
+Smith.exp3.CI <- 
+  get.ci.partial.eta.squared(1, 
+                             11,
+                             5.90,
+                             conf.level = 0.90) 
+
+
+ts.acc.pes.int <- data.frame(matrix(nrow = 6, ncol = 6))
+colnames(ts.acc.pes.int) <- c("Data", "Type", "Effect.size", "CI.Lower", "CI.Upper", "name")
+ts.acc.pes.int[6] <- c(rep("Exp 1", times = 2),
+                       rep("Exp 2", times = 2),
+                       rep("Exp 3", times = 2)
+                       )
+
+ts.acc.pes.int[2] <- rep(c("Replication", "Original"), times = 3)
+# ts.acc.pes.int[6]     <- c(rep("RT1", times = 2),
+#                            rep("Acc", times = 2),
+#                            rep("RT2", times = 2)
+#                           )
+
+ts.acc.pes.int[1,3:5] <- c(rep.exp1.peta2, data.frame(rep.exp1.CI))
+ts.acc.pes.int[2,3:5] <- c(Smith.exp1.peta2, data.frame(Smith.exp1.CI))
+ts.acc.pes.int[3,3:5] <- c(ts.acc.pes$Current[6], data.frame(interaction_effect_CI))
+ts.acc.pes.int[4,3:5] <- c(ts.acc.pes$Original[6], data.frame(interaction.original))
+ts.acc.pes.int[5,3:5] <- c(rep.exp3.peta2, data.frame(rep.exp3.CI))
+ts.acc.pes.int[6,3:5] <- c(Smith.exp3.peta2, data.frame(Smith.exp3.CI))
+
 #Graph comparison of key effects for all three experiments- Similar to forest plot in sig
 #filtering paper? 
-forest.colors <- c("black", "red")
+forest.colors <- c("red", "black")
 
-ts.acc.pes.int$Exp <- as.factor(ts.acc.pes.int$Exp)
+ts.acc.pes.int$Data <- as.factor(ts.acc.pes.int$Data)
+ts.acc.pes.int$Type <- as.factor(ts.acc.pes.int$Type)
 
 str(ts.acc.pes.int)
 forest.comp <- mod.forestplot(df = ts.acc.pes.int,
                               estimate = Effect.size,
                               ci.lower = CI.Lower,
                               ci.upper = CI.Upper,
-                              colour = Exp,
+                              colour = Type,
                               xlab = "Partial Eta-Squared"
 ) + 
   scale_color_manual(values = forest.colors) 
 
 forest.comp
+
+#For a mini-meta-analysis
+# Extracting (sampling) var or SE from PES? CIs around PES are calculated in papers and software using the lower and upper-bound F-ratio dfs
+# Probably not possible (unknown sampling distribution)  
+# https://www.google.com/books/edition/The_SAGE_Encyclopedia_of_Research_Design/Pn1ZEAAAQBAJ?hl=en&gbpv=1&dq=partial%20eta%20squared%20and%20sampling%20distribution&pg=PA1166&printsec=frontcover
+# Convert to Cohen's d, one appropriate for a within design?
+# Use dz? easystats
+
+# Straub et al. used dav (Mdiff/Saverage), Cummings (2014) then corrected dz using Hedges gz
+# For N > 20+ I think dz and gz are equvialent. Need to look up 
+# https://easystats.github.io/effectsize/reference/t_to_r.html
+
+# Comparison among all calculations
+# https://www.tqmp.org/RegularArticles/vol17-1/p051/p051.pdf
+
+
 ```
