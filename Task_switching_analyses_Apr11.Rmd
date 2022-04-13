@@ -515,11 +515,14 @@ output_Smith_exp2_acc
 output_acc$Effect
 output_Smith_exp2_acc$Effect
 
-ts.acc.pes <- data.frame(matrix(nrow = 8, ncol = 3))
-ts.acc.pes[1] <- output_acc$Effect
-ts.acc.pes[2] <- output_acc$pes
-ts.acc.pes[3] <- output_Smith_exp2_acc$pes
-ts.acc.pes[4] <- c(rep("Black", times = 5), "Red", "Black", "Black")
+#Drop intercept in the ANOVA 
+ts.acc.pes <- data.frame(matrix(nrow = 7, ncol = 3))
+ts.acc.pes[1] <- output_acc$Effect[2:8]
+ts.acc.pes[2] <- output_acc$pes[2:8]
+ts.acc.pes[3] <- output_Smith_exp2_acc$pes[2:8]
+ts.acc.pes[4] <- c("Red", rep("Black", times =2), rep("Red", times = 2), "Black", "Red")
+colnames(ts.acc.pes) <- c("Effect", "Replication", "Original", "col")
+
 
 colnames(ts.acc.pes) <- c("Effect", "Current", "Original", "col")
 #Scatter plot of original vs. rep effects
