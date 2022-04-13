@@ -522,18 +522,25 @@ ts.acc.pes[3] <- output_Smith_exp2_acc$pes
 ts.acc.pes[4] <- c(rep("Black", times = 5), "Red", "Black", "Black")
 
 colnames(ts.acc.pes) <- c("Effect", "Current", "Original", "col")
-#Scatter plot of original vs. reo effects
+#Scatter plot of original vs. rep effects
+#Need to get CIs: 
+#Go through a data.frame repeating fct get.ci.partial.eta.squared by row
+#try group_by() + map ? 
+output_Smith_exp2_acc
+str(output_Smith_exp2_acc)
 
-ggplot(ts.acc.pes, aes(x = Original, y = Current, colour = col)) +
+#Possible to label on graph? Might have to use a legend with symbols? idk
+#This will probably be too busy 
+
+#Experiment 2, accuracy (all ANOVA results except the intercept)
+ggplot(ts.acc.pes, aes(x = Original, y = Replication, colour = col)) +
   geom_point() + 
-  geom_smooth(method = lm, se = T) + #Confidence interval is cutoff b/c values are bounded from 0 to 1
+ # geom_smooth(method = lm, se = F) + #Confidence interval is cutoff b/c values are bounded from 0 to 1
   scale_colour_identity() +
-  xlim(-0.01, 1.01) +
-  ylim(-0.01, 1.01)
-
-# plot(ts.acc.pes$Current[2:8], 
-#      ts.acc.pes$Original[2:8])
-# lines(x = c(0,1), y = c(0,1))
+  xlim(0, 1.00) +
+  ylim(0, 1.00) +
+  geom_abline(slope = 1, intercept = 0, col = "blue") + 
+  theme_minimal()
 
 #Exact proportion of current to original effect: ~9%
 ts.acc.pes$Current[6]/ts.acc.pes$Original[6]
