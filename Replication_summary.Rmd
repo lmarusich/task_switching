@@ -1,0 +1,345 @@
+---
+title: "Three Replication Summary"
+author: "Laura Marusich & Jon Bakdash"
+date: "4/13/2022"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, tidy = FALSE)
+options(width = 100)
+
+
+if(!require("pacman")) install.packages("pacman")
+pacman::p_load(knitr, tidyverse, readxl, afex, apaTables)
+# pacman::p_load(knitr, rmarkdown, yaml, bookdown, cowplot, pals, viridis, renv, 
+#                tidyverse, parallel, optimParallel, ez, psychReport, sjstats, 
+#                rstatix, corrplot, superb, apaTables, afex, readxl, rlang,
+#                ggstance, trimr)
+
+#Get the working directory
+workingdir <- getwd()
+
+#Kludge so ggforestplot doesn't need to be installed, b/c it requires devtools 
+source(paste0(workingdir, "/fcts/theme_forest.R"))
+source(paste0(workingdir, "/fcts/ng_colours.R"))
+source(paste0(workingdir, "/fcts/geom_effect.R"))
+
+#Modified version of forestplot from ggforestplot
+#This modded version is from: https://osf.io/bxpjc/
+source(paste0(workingdir, "/fcts/mod.forestplot.R"))
+
+```
+
+## Get Smith data and effect sizes
+
+```{r}
+
+### Experiment 1 (Stroop)
+
+#load acc data
+Smith_Exp1_acc <- read_excel("Smith Data/StandingData.xlsx", 
+                             sheet = "Exp1Acc", 
+                             n_max = 14)
+#load rt data
+Smith_Exp1_rt <- read_excel("Smith Data/StandingData.xlsx", 
+                            sheet = "Exp1RT", 
+                            n_max = 14)
+
+#Restructure from wide to narrow, using tidyr
+Smith_Exp1_acc_narrow <- Smith_Exp1_acc %>%
+  pivot_longer(cols = sit_neut:sta_con, names_to = "condition", values_to = "acc") %>%
+  separate(col = condition, into = c("posture", "con"))
+
+Smith_Exp1_rt_narrow <- Smith_Exp1_rt %>%
+  pivot_longer(cols = sit_neut:sta_con, names_to = "condition", values_to = "rt") %>%
+  separate(col = condition, into = c("posture", "con"))
+
+Smith_Exp1 <- merge(Smith_Exp1_acc_narrow, Smith_Exp1_rt_narrow)
+
+
+Smith_exp1_anova_acc <- aov_ez(data = Smith_Exp1, 
+                               dv = 'acc', 
+                               id = 'subj', 
+                               within = c('posture', 'con'),
+                               anova_table = list(es = "pes", correction = "none"),
+                               type = 3)
+kable(nice(Smith_exp1_anova_acc), caption = "ANOVA results for Smith Exp 1 - accuracy")
+
+Smith_exp1_anova_rt <- aov_ez(data = Smith_Exp1, 
+                              dv = 'rt', 
+                              id = 'subj', 
+                              within = c('posture', 'con'),
+                              anova_table = list(es = "pes", correction = "none"),
+                              type = 3)
+kable(nice(Smith_exp1_anova_rt), caption = "ANOVA results for Smith Exp 1 - RT")
+
+
+### Experiment 2 (Task-switching)
+
+#load acc data
+Smith_Exp2_acc <- read_excel("Smith Data/StandingData.xlsx", 
+                             sheet = "Exp2Acc", 
+                             n_max = 30)
+#load rt data
+Smith_Exp2_rt <- read_excel("Smith Data/StandingData.xlsx", 
+                            sheet = "Exp2RT", 
+                            n_max = 30)
+
+#Restructure from wide to narrow, using tidyr
+Smith_Exp2_acc_narrow <- Smith_Exp2_acc %>%
+  pivot_longer(cols = sit_congruent_noswitch:stand_incongruent_switch,
+               names_to = "condition", values_to = "acc") %>%
+  separate(col = condition, into = c("posture", "con", "switch"))
+
+Smith_Exp2_rt_narrow <- Smith_Exp2_rt %>%
+  pivot_longer(cols = sit_congruent_noswitch:stand_incongruent_switch,
+               names_to = "condition", values_to = "rt") %>%
+  separate(col = condition, into = c("posture", "con", "switch"))
+
+Smith_Exp2 <- merge(Smith_Exp2_acc_narrow, Smith_Exp2_rt_narrow)
+
+
+Smith_exp2_anova_acc <- aov_ez(data = Smith_Exp2, 
+                               dv = 'acc', 
+                               id = 'subj', 
+                               within = c('posture', 'con', 'switch'),
+                               anova_table = list(es = "pes", correction = "none"),
+                               type = 3)
+kable(nice(Smith_exp2_anova_acc), caption = "ANOVA results for Smith Exp 2 - accuracy")
+
+Smith_exp2_anova_rt <- aov_ez(data = Smith_Exp2, 
+                              dv = 'rt', 
+                              id = 'subj', 
+                              within = c('posture', 'con', 'switch'),
+                              anova_table = list(es = "pes", correction = "none"),
+                              type = 3)
+kable(nice(Smith_exp2_anova_rt), caption = "ANOVA results for Smith Exp 2 - RT")
+
+
+### Experiment 3 (Visual Search)
+
+#load acc data
+Smith_Exp3_acc <- read_excel("Smith Data/StandingData.xlsx", 
+                             sheet = "Exp3Acc", 
+                             n_max = 12) %>%
+  select(subj:sit8)
+
+#load rt data
+Smith_Exp3_rt <- read_excel("Smith Data/StandingData.xlsx", 
+                            sheet = "Exp3RT", 
+                            n_max = 12)%>%
+  select(subj:sit8)
+
+#Restructure from wide to narrow, using tidyr
+Smith_Exp3_acc_narrow <- Smith_Exp3_acc %>%
+  pivot_longer(cols = stand4:sit8, names_to = "condition", values_to = "acc") %>%
+  separate(col = condition, into = c("posture", "set.size"), sep = -1)
+
+Smith_Exp3_rt_narrow <- Smith_Exp3_rt %>%
+  pivot_longer(cols = stand4:sit8, names_to = "condition", values_to = "rt") %>%
+  separate(col = condition, into = c("posture", "set.size"), sep = -1)
+
+Smith_Exp3 <- merge(Smith_Exp3_acc_narrow, Smith_Exp3_rt_narrow)
+
+
+Smith_exp3_anova_acc <- aov_ez(data = Smith_Exp3, 
+                               dv = 'acc', 
+                               id = 'subj', 
+                               within = c('posture', 'set.size'),
+                               anova_table = list(es = "pes", correction = "none"),
+                               type = 3)
+kable(nice(Smith_exp3_anova_acc), caption = "ANOVA results for Smith Exp 3 - accuracy")
+
+Smith_exp3_anova_rt <- aov_ez(data = Smith_Exp3, 
+                              dv = 'rt', 
+                              id = 'subj', 
+                              within = c('posture', 'set.size'),
+                              anova_table = list(es = "pes", correction = "none"),
+                              type = 3)
+kable(nice(Smith_exp3_anova_rt), caption = "ANOVA results for Smith Exp 3 - RT")
+
+
+```
+
+
+## Collect replication data and effect sizes
+
+```{r}
+
+### Experiment 1 (Stroop)
+
+#for now, using stats reported in paper draft
+repl_exp1_anova_rt <- data.frame(Effect = c("posture","con", "posture:con"),
+                                 DFn = c(1,2,2),
+                                 DFd = c(49,98,98),
+                                 MSE = c(3188.110, 1578.332, 520.963),
+                                 F = c(0.258, 22.470, 0.081),
+                                 pes = c(.005, .314, .002))
+
+repl_exp1_anova_acc <- data.frame(Effect = c("posture","con", "posture:con"),
+                                  DFn = c(1,2,2),
+                                  DFd = c(49,98,98),
+                                  MSE = c(14.823, 9.641, 5.865),
+                                  F = c(0.001, 8.813, 1.533),
+                                  pes = c(.005, .152, .030))
+
+
+### Experiment 2 (Task-switching)
+
+repl_exp2_anova_rt <- read.csv("output/Task_switching_ANOVA_trimmed_RT.csv",
+                               stringsAsFactors = F) %>%
+  select(-X) %>%
+  filter((Effect != "(Intercept)"))
+
+repl_exp2_anova_acc <- read.csv("output/Task_switching_ANOVA_acc.csv",
+                                stringsAsFactors = F) %>%
+  select(-X) %>%
+  filter((Effect != "(Intercept)"))
+
+
+### Experiment 3 (Visual Search)
+
+#for now, using stats reported in paper draft
+repl_exp3_anova_rt <- data.frame(Effect = c("posture","set.size", "posture:set.size"),
+                                 DFn = c(1,1,1),
+                                 DFd = c(49,49,49),
+                                 MSE = c(3137.516, 956.388, 727.64),
+                                 F = c(6.54, 373.763, 0.031),
+                                 pes = c(.118, .884, .001))
+
+repl_exp3_anova_acc <- data.frame(Effect = c("posture","set.size", "posture:set.size"),
+                                  DFn = c(1,1,1),
+                                  DFd = c(49,49,49),
+                                  MSE = c(2.430, 3.628, 2.794),
+                                  F = c(3.311, 2.312, 0.623),
+                                  pes = c(.0633, .045, .013))
+
+
+
+
+```
+
+## Add CIs to pes
+
+```{r}
+
+smith_anovas <- lst(Smith_exp1_anova_acc$anova_table,
+                    Smith_exp1_anova_rt$anova_table,
+                    Smith_exp2_anova_acc$anova_table,
+                    Smith_exp2_anova_rt$anova_table,
+                    Smith_exp3_anova_acc$anova_table,
+                    Smith_exp3_anova_rt$anova_table)
+repl_anovas <- lst(repl_exp1_anova_acc,
+                   repl_exp1_anova_rt,
+                   repl_exp2_anova_acc,
+                   repl_exp2_anova_rt,
+                   repl_exp3_anova_acc,
+                   repl_exp3_anova_rt)
+
+for (i in 1:6){
+  
+  smith_anovas[[i]] <- smith_anovas[[i]] %>%
+    rownames_to_column() %>%
+    as.data.frame() %>%
+    rowwise() %>%
+    mutate(LL = get.ci.partial.eta.squared(F, `num Df`, `den Df`, conf.level = 0.9)$LL,
+           UL = get.ci.partial.eta.squared(F, `num Df`, `den Df`, conf.level = 0.9)$UL)
+  
+  repl_anovas[[i]] <- repl_anovas[[i]] %>%
+    rowwise() %>%
+    mutate(LL = get.ci.partial.eta.squared(F, DFn, DFd, conf.level = 0.9)$LL,
+           UL = get.ci.partial.eta.squared(F, DFn, DFd, conf.level = 0.9)$UL)
+}
+
+
+```
+
+## Make summary plots
+```{r}
+
+###Exp1 (Stroop)
+smith.stroop <- smith_anovas[[1]] %>%
+  ungroup() %>%
+  bind_rows(smith_anovas[[2]]) %>%
+  select(Effect = rowname, pes, LL, UL) %>%
+  mutate(dv = rep(c("acc","rt"), each = 3), col = rep(c("black","black","red"),2))
+
+repl.stroop <- repl_anovas[[1]] %>%
+  ungroup() %>%
+  bind_rows(repl_anovas[[2]]) %>%
+  select(Effect, pes, LL, UL) %>%
+  mutate(dv = rep(c("acc","rt"), each = 3), col = rep(c("black","black","red"),2))
+
+
+stroop.effects <- merge(smith.stroop, repl.stroop, 
+                        by = c("Effect","dv"), suffixes = c("Smith","Replication"))
+  
+
+ggplot(data = stroop.effects, aes(x = pesSmith, y = pesReplication, shape = dv)) +
+  geom_point(size = 2.5, col = stroop.effects$colSmith) +
+  xlim(0, 1.00) +
+  ylim(0, 1.00) +
+  geom_abline(slope = 1, intercept = 0, col = "blue") + 
+  theme_minimal() +
+  labs(y = "Replication", x = "Smith", title = "Stroop Effect Size Comparison")
+
+###Exp2 (Task-switching)
+smith.ts <- smith_anovas[[3]] %>%
+  ungroup() %>%
+  bind_rows(smith_anovas[[4]]) %>%
+  select(Effect = rowname, pes, LL, UL) %>%
+  mutate(dv = rep(c("acc","rt"), each = 7), 
+         col = rep(c("black","black","black","black","red","black","black"),2))
+
+repl.ts <- repl_anovas[[3]] %>%
+  ungroup() %>%
+  bind_rows(repl_anovas[[4]]) %>%
+  select(Effect, pes, LL, UL) %>%
+  mutate(dv = rep(c("acc","rt"), each = 7), 
+         col = rep(c("black","black","black","black","red","black","black"),2),
+         Effect = smith.ts$Effect)
+
+
+ts.effects <- merge(smith.ts, repl.ts, 
+                        by = c("Effect","dv"), suffixes = c("Smith","Replication"))
+  
+
+ggplot(data = ts.effects, aes(x = pesSmith, y = pesReplication, shape = dv)) +
+  geom_point(size = 2.5, col = ts.effects$colSmith) +
+  xlim(0, 1.00) +
+  ylim(0, 1.00) +
+  geom_abline(slope = 1, intercept = 0, col = "blue") + 
+  theme_minimal() +
+  labs(y = "Replication", x = "Smith", title = "Task-Switching Effect Size Comparison")
+
+###Exp3 (Visual Search)
+smith.vs <- smith_anovas[[5]] %>%
+  ungroup() %>%
+  bind_rows(smith_anovas[[6]]) %>%
+  select(Effect = rowname, pes, LL, UL) %>%
+  mutate(dv = rep(c("acc","rt"), each = 3), 
+         col = rep(c("black","black","red"),2))
+
+repl.vs <- repl_anovas[[5]] %>%
+  ungroup() %>%
+  bind_rows(repl_anovas[[6]]) %>%
+  select(Effect, pes, LL, UL) %>%
+  mutate(dv = rep(c("acc","rt"), each = 3), 
+         col = rep(c("black","black","red"),2))
+
+
+vs.effects <- merge(smith.vs, repl.vs, 
+                        by = c("Effect","dv"), suffixes = c("Smith","Replication"))
+  
+
+ggplot(data = vs.effects, aes(x = pesSmith, y = pesReplication, shape = dv)) +
+  geom_point(size = 2.5, col = vs.effects$colSmith) +
+  xlim(0, 1.00) +
+  ylim(0, 1.00) +
+  geom_abline(slope = 1, intercept = 0, col = "blue") + 
+  theme_minimal() +
+  labs(y = "Replication", x = "Smith", title = "Visual Search Effect Size Comparison")
+
+```
+

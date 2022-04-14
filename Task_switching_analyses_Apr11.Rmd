@@ -524,7 +524,7 @@ ts.acc.pes[4] <- c("Red", rep("Black", times =2), rep("Red", times = 2), "Black"
 colnames(ts.acc.pes) <- c("Effect", "Replication", "Original", "col")
 
 
-colnames(ts.acc.pes) <- c("Effect", "Current", "Original", "col")
+# colnames(ts.acc.pes) <- c("Effect", "Current", "Original", "col")
 #Scatter plot of original vs. rep effects
 #Need to get CIs: 
 #Go through a data.frame repeating fct get.ci.partial.eta.squared by row
@@ -546,7 +546,7 @@ ggplot(ts.acc.pes, aes(x = Original, y = Replication, colour = col)) +
   theme_minimal()
 
 #Exact proportion of current to original effect: ~9%
-ts.acc.pes$Current[6]/ts.acc.pes$Original[6]
+ts.acc.pes$Replication[5]/ts.acc.pes$Original[5]
 
 #Compare current vs. original effect sizes
 interaction.original <- 
