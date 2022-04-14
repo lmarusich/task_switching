@@ -11,10 +11,10 @@ options(width = 100)
 
 
 if(!require("pacman")) install.packages("pacman")
-pacman::p_load(knitr, tidyverse, readxl, afex, apaTables, cowplot)
+pacman::p_load(knitr, tidyverse, readxl, afex, apaTables, cowplot, rlang)
 # pacman::p_load(knitr, rmarkdown, yaml, bookdown, pals, viridis, renv, 
 #                tidyverse, parallel, optimParallel, ez, psychReport, sjstats, 
-#                rstatix, corrplot, superb, apaTables, afex, readxl, rlang,
+#                rstatix, corrplot, superb,
 #                ggstance, trimr)
 
 #Get the working directory
@@ -387,6 +387,47 @@ ggsave(all.plot,
        height = 4.50,
        dpi = 600)
 
+
+```
+## Forest Plot
+```{r}
+#Graph comparison of key effects for all three experiments- Similar to forest plot in sig
+#filtering paper? 
+forest.colors <- c("black", "red")
+
+forest.data <- data.frame(Experiment = rep(c("Smith", "Replication"), 3),
+                          name = rep(c("Stroop", "Task-switching", "Visual Search"), each = 2),
+                          dv = rep(c("rt","acc","rt"), each = 2),
+                          pes = numeric(6),
+                          LL = numeric(6),
+                          UL = numeric(6))
+forest.data[1,4:6] <- smith_anovas[[2]][3,c(6,8,9)]
+forest.data[2,4:6] <- repl_anovas[[2]][3,c(6,7,8)]
+
+forest.data[3,4:6] <- smith_anovas[[3]][5,c(6,8,9)]
+forest.data[4,4:6] <- repl_anovas[[3]][5,c(10,11,12)]
+
+forest.data[5,4:6] <- smith_anovas[[6]][3,c(6,8,9)]
+forest.data[6,4:6] <- repl_anovas[[6]][3,c(6,7,8)]
+
+
+forest.comp <- mod.forestplot(df = forest.data,
+                              estimate = pes,
+                              ci.lower = LL,
+                              ci.upper = UL,
+                              colour = Experiment,
+                              xlab = "Partial Eta-Squared"
+) + 
+  scale_color_manual(values = forest.colors) 
+
+forest.comp
+
+ggsave(forest.comp, 
+       file = "plots/forest_plot.pdf", 
+       units = "in",
+       width = 6, 
+       height = 6,
+       dpi = 600)
 
 ```
 
