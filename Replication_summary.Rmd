@@ -11,8 +11,8 @@ options(width = 100)
 
 
 if(!require("pacman")) install.packages("pacman")
-pacman::p_load(knitr, tidyverse, readxl, afex, apaTables)
-# pacman::p_load(knitr, rmarkdown, yaml, bookdown, cowplot, pals, viridis, renv, 
+pacman::p_load(knitr, tidyverse, readxl, afex, apaTables, cowplot)
+# pacman::p_load(knitr, rmarkdown, yaml, bookdown, pals, viridis, renv, 
 #                tidyverse, parallel, optimParallel, ez, psychReport, sjstats, 
 #                rstatix, corrplot, superb, apaTables, afex, readxl, rlang,
 #                ggstance, trimr)
@@ -276,13 +276,19 @@ stroop.effects <- merge(smith.stroop, repl.stroop,
                         by = c("Effect","dv"), suffixes = c("Smith","Replication"))
   
 
-ggplot(data = stroop.effects, aes(x = pesSmith, y = pesReplication, shape = dv)) +
+stroop.plot <- ggplot(data = stroop.effects, aes(x = pesSmith, y = pesReplication, shape = dv)) +
   geom_point(size = 2.5, col = stroop.effects$colSmith) +
   xlim(0, 1.00) +
   ylim(0, 1.00) +
   geom_abline(slope = 1, intercept = 0, col = "blue") + 
-  theme_minimal() +
-  labs(y = "Replication", x = "Smith", title = "Stroop Effect Size Comparison")
+  theme_classic() +
+  theme(legend.position = c(0.2, 0.85), 
+        legend.background = element_rect(colour = "black",
+                                         linetype = "solid", 
+                                         fill = "lightgray"),
+        legend.title = element_blank(),
+        legend.margin=margin(-3,5,0,0)) +
+  labs(y = "Replication", x = "Smith", title = "Stroop")
 
 ###Exp2 (Task-switching)
 smith.ts <- smith_anovas[[3]] %>%
@@ -305,13 +311,19 @@ ts.effects <- merge(smith.ts, repl.ts,
                         by = c("Effect","dv"), suffixes = c("Smith","Replication"))
   
 
-ggplot(data = ts.effects, aes(x = pesSmith, y = pesReplication, shape = dv)) +
+ts.plot <- ggplot(data = ts.effects, aes(x = pesSmith, y = pesReplication, shape = dv)) +
   geom_point(size = 2.5, col = ts.effects$colSmith) +
   xlim(0, 1.00) +
   ylim(0, 1.00) +
   geom_abline(slope = 1, intercept = 0, col = "blue") + 
-  theme_minimal() +
-  labs(y = "Replication", x = "Smith", title = "Task-Switching Effect Size Comparison")
+  theme_classic() +
+  theme(legend.position = c(0.2, 0.85), 
+        legend.background = element_rect(colour = "black",
+                                         linetype = "solid", 
+                                         fill = "lightgray"),
+        legend.title = element_blank(),
+        legend.margin=margin(-3,5,0,0)) +
+  labs(y = "Replication", x = "Smith", title = "Task-Switching")
 
 ###Exp3 (Visual Search)
 smith.vs <- smith_anovas[[5]] %>%
@@ -333,13 +345,48 @@ vs.effects <- merge(smith.vs, repl.vs,
                         by = c("Effect","dv"), suffixes = c("Smith","Replication"))
   
 
-ggplot(data = vs.effects, aes(x = pesSmith, y = pesReplication, shape = dv)) +
+vs.plot <- ggplot(data = vs.effects, aes(x = pesSmith, y = pesReplication, shape = dv)) +
   geom_point(size = 2.5, col = vs.effects$colSmith) +
-  xlim(0, 1.00) +
-  ylim(0, 1.00) +
+  xlim(0, 1) +
+  ylim(0, 1) +
   geom_abline(slope = 1, intercept = 0, col = "blue") + 
-  theme_minimal() +
-  labs(y = "Replication", x = "Smith", title = "Visual Search Effect Size Comparison")
+  theme_classic() +
+  theme(legend.position = c(0.2, 0.85), 
+        legend.background = element_rect(colour = "black",
+                                         linetype = "solid", 
+                                         fill = "lightgray"),
+        legend.title = element_blank(),
+        legend.margin=margin(-3,5,0,0)) +
+  labs(y = "Replication", x = "Smith", title = "Visual Search")
+
+all.plot <- plot_grid(stroop.plot, ts.plot, vs.plot, ncol = 3)
+
+title <- ggdraw() + 
+  draw_label(
+    "Effect Size Comparisons",
+    fontface = 'bold',
+    x = 0,
+    hjust = 0
+  ) +
+  theme(
+    # add margin on the left of the drawing canvas,
+    # so title is aligned with left edge of first plot
+    plot.margin = margin(0, 0, 0, 7)
+  )
+all.plot <- plot_grid(
+  title, all.plot,
+  ncol = 1,
+  # rel_heights values control vertical title margins
+  rel_heights = c(0.1, 1)
+)
+
+ggsave(all.plot, 
+       file = "plots/all_effects_plot.pdf", 
+       units = "in",
+       width = 9.5, 
+       height = 4.50,
+       dpi = 600)
+
 
 ```
 
